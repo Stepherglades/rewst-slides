@@ -1,0 +1,250 @@
+/* ========================================================================
+   Rewst Design System — Colors & Typography Tokens
+   ======================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  /* -------------------------------------------------------------------- */
+  /* BRAND COLORS — pulled from Rewst marketing site root                  */
+  /* -------------------------------------------------------------------- */
+
+  /* Teals — primary brand */
+  --c-teal-deep:      #082C2C; /* the workhorse dark — backgrounds of nav/footer/cards bg */
+  --c-teal-dark:      #005655; /* mid-dark teal — section backgrounds, alt nav */
+  --c-teal:           #00BBB4; /* primary teal — accent, glyphs, dot indicators */
+  --c-seafoam:        #78CFCF; /* light teal accent */
+  --c-aqua:           #A5DFDF; /* lightest teal — pill backgrounds, headlines on dark */
+
+  /* Indigos — secondary */
+  --c-purple-dark:    #282242; /* deep indigo */
+  --c-black-deep:     #141121; /* near-black with indigo tint */
+  --c-indigo:         #504384; /* primary indigo accent */
+  --c-lavender-muted: #968EB5;
+  --c-lavender:       #BAB3CF; /* light indigo */
+
+  /* Warm / yellow */
+  --c-orange:         #F9A100; /* CTA — primary button fill */
+  --c-light-amber:    #FBC766;
+  --c-amber:          #FDD999; /* button glow circle, soft surface */
+  --c-brown:          #7D5100; /* warm text on amber */
+  --c-brown-dark:     #432800; /* deeper warm text */
+
+  /* Reds */
+  --c-coral:          #F15B5B; /* Alert Coral (canonical) */
+  --c-pink:           #F79D9D;
+  --c-pink-soft:      #F9BDBD;
+  --c-red-dark:       #82272B;
+  --c-burgundy:       #411416;
+
+  /* Neutrals */
+  --c-white:          #FFFFFF;
+  --c-gray-light:     #E6E6E6; /* nav pill background, soft divider */
+  --c-gray:           #D9D9D9;
+  --c-black:          #000000;
+
+  /* -------------------------------------------------------------------- */
+  /* SEMANTIC TOKENS                                                       */
+  /* -------------------------------------------------------------------- */
+
+  /* Surfaces */
+  --bg:               var(--c-white);
+  --bg-deep:          var(--c-teal-deep);     /* nav, footer, hero overlay */
+  --bg-section:       var(--c-teal-dark);
+  --bg-soft:          var(--c-gray-light);
+  --bg-accent:        var(--c-aqua);
+  --bg-card:          var(--c-white);
+  --bg-card-soft:     var(--c-amber);
+  --bg-card-teal:     var(--c-aqua);
+  --bg-cta:           var(--c-orange);
+
+  /* Foreground (text) */
+  --fg:               var(--c-teal-deep);     /* default body on light */
+  --fg-muted:         #2B2B2B;
+  --fg-on-dark:       var(--c-gray-light);    /* body on dark */
+  --fg-headline-dark: var(--c-aqua);          /* aqua headlines on deep teal */
+  --fg-headline-warm: var(--c-orange);        /* orange headlines on deep teal */
+  --fg-warm:          var(--c-brown-dark);
+  --fg-on-amber:      var(--c-brown);
+
+  /* Lines / borders */
+  --border-subtle:    var(--c-gray-light);
+  --border-strong:    var(--c-teal-deep);
+
+  /* Action colors */
+  --action:           var(--c-orange);
+  --action-hover:     #E08F00;
+  --action-fg:        var(--c-teal-deep);
+  --action-arrow:     var(--c-coral);
+  --action-glow:      var(--c-amber);
+
+  /* -------------------------------------------------------------------- */
+  /* TYPOGRAPHY                                                            */
+  /* -------------------------------------------------------------------- */
+
+  /* Families */
+  --font-heading:     "Poppins", "Goldplay", system-ui, sans-serif;
+  --font-heading-print: "Goldplay", "Poppins", serif; /* print: Goldplay; web fallback: Poppins */
+  --font-body:        "Montserrat", system-ui, sans-serif;
+
+  /* Weights */
+  --fw-normal:        500; /* Rewst body weight */
+  --fw-semibold:      600;
+  --fw-bold:          700;
+  --fw-black:         900;
+
+  /* Type scale (px) */
+  --fs-90: 90px;     /* hero stat */
+  --fs-72: 72px;     /* display */
+  --fs-56: 56px;     /* h1 / section header */
+  --fs-48: 48px;     /* h2 */
+  --fs-40: 40px;
+  --fs-36: 36px;     /* card title / stat label */
+  --fs-30: 30px;
+  --fs-28: 28px;
+  --fs-24: 24px;
+  --fs-20: 20px;     /* eyebrow / button */
+  --fs-18: 18px;
+  --fs-16: 16px;     /* body */
+  --fs-14: 14px;     /* caption */
+
+  /* Line-height */
+  --lh-tight:    1.05;   /* headlines (60/56 = ~1.07) */
+  --lh-snug:     1.2;
+  --lh-normal:   1.5;    /* body */
+
+  /* Letter-spacing */
+  --ls-tight:    -0.01em;
+  --ls-normal:   0;
+  --ls-wide:     0.04em;
+
+  /* -------------------------------------------------------------------- */
+  /* SPACING & RADII                                                       */
+  /* -------------------------------------------------------------------- */
+
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:   12px;
+  --space-4:   16px;
+  --space-5:   24px;
+  --space-6:   32px;
+  --space-7:   48px;
+  --space-8:   64px;
+  --space-9:   80px;     /* section gutter */
+  --space-10:  120px;    /* section padding-y */
+
+  /* Radii — Rewst uses big rounded corners and pill shapes */
+  --r-sm:      8px;
+  --r-md:      20px;
+  --r-lg:      32px;
+  --r-xl:      50px;     /* the signature "card" radius */
+  --r-xxl:     85px;     /* large hero/testimonial cards */
+  --r-pill:    100px;    /* nav pill */
+  --r-button:  20.5px;   /* button radius (matches 41px tall pill) */
+
+  /* Shadows — used sparingly; the design is mostly flat */
+  --shadow-sm: 0 1px 2px rgba(8,44,44,0.08);
+  --shadow-md: 0 6px 16px rgba(8,44,44,0.10);
+  --shadow-lg: 0 14px 32px rgba(8,44,44,0.16);
+
+  /* Layout widths (translated from rem in Rewst CSS) */
+  --w-narrow:  960px;
+  --w-medium:  1200px;
+  --w-content: 1600px;
+  --w-wide:    2000px;
+  --w-nav:     1600px;
+}
+
+/* ========================================================================
+   SEMANTIC ELEMENT STYLES
+   ======================================================================== */
+
+html { font-size: 16px; }
+
+body {
+  font-family: var(--font-body);
+  font-weight: var(--fw-normal);
+  font-size: var(--fs-16);
+  line-height: var(--lh-normal);
+  color: var(--fg);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, .h1 {
+  font-family: var(--font-heading);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-56);
+  line-height: 60px;          /* Rewst uses fixed 60px line-height on h1 */
+  color: var(--fg-headline-warm);
+  margin: 0;
+}
+h2, .h2 {
+  font-family: var(--font-heading);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-48);
+  line-height: var(--lh-tight);
+  margin: 0;
+}
+h3, .h3 {
+  font-family: var(--font-body);          /* Montserrat 36 reg/semibold for sub-cards */
+  font-weight: var(--fw-semibold);
+  font-size: var(--fs-36);
+  line-height: var(--lh-snug);
+  margin: 0;
+}
+h4, .h4 {
+  font-family: var(--font-heading);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-28);
+  line-height: var(--lh-snug);
+  margin: 0;
+}
+h5, .h5 {
+  font-family: var(--font-body);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-20);
+  line-height: var(--lh-snug);
+  margin: 0;
+}
+
+p, .body {
+  font-family: var(--font-body);
+  font-weight: var(--fw-normal);
+  font-size: var(--fs-16);
+  line-height: var(--lh-normal);
+  margin: 0;
+}
+
+.eyebrow {
+  font-family: var(--font-body);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-14);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-wide);
+  color: var(--c-teal);
+}
+
+.caption {
+  font-family: var(--font-body);
+  font-size: var(--fs-14);
+  color: var(--fg-muted);
+}
+
+.stat-number {
+  font-family: var(--font-heading);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-90);
+  line-height: 1;
+}
+
+code, .mono {
+  font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, monospace;
+  font-size: 0.95em;
+}
+
+/* On-dark variant */
+.on-dark { color: var(--fg-on-dark); }
+.on-dark h1 { color: var(--fg-headline-warm); }
+.on-dark h2, .on-dark h3 { color: var(--fg-headline-dark); }

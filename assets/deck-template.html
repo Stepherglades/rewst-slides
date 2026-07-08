@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>[Deck title] — Rewst</title>
+<link rel="stylesheet" href="design-system/colors_and_type.css"/>
+<link rel="stylesheet" href="deck.css"/>
+<script src="deck-stage.js"></script>
+
+<!-- Speaker notes (positional — index N matches slide N+1) -->
+<script type="application/json" id="speaker-notes">
+[
+  "This is the title slide. Open with a single sentence framing the talk — who you are, why they should care, and the one thing you want them to take away by the end. Don't read the title aloud; speak around it. About 30 seconds.",
+  "Walk through the agenda at a pace of roughly five seconds per item. Flag any sections you'd particularly like questions on, and tell the audience you'll save the formal Q&A for the end so people don't feel they need to interrupt. About one minute.",
+  "Section opener. Pause. Take a breath. Let the section number land. Restate the problem in your own words before moving into the data — the audience needs context for the stat that's coming on the next slide.",
+  "This is the headline number. Don't just read it — anchor it to something the audience already knows. Then pivot to what it means in plain English using the right-hand panel. Keep this slide on screen for at least 45 seconds so the number sinks in.",
+  "Three reasons, not four. If you find yourself adding a fourth, cut the weakest one — three is the sweet spot for retention. Speak to each one for about 30 seconds; don't read the body copy verbatim.",
+  "Comparison slide. Stand to the side so the audience can see both columns. Walk left first (the painful status quo), then right (where we want to be). Make eye contact when you say the words 'this is what changes'.",
+  "Big visual moment. Let the illustration breathe — talk over it without interrupting the image with bullet points. This is the slide you'd put in a press release, so the headline matters more than the body copy.",
+  "Second section opener. Same pacing pattern as the first one — pause, let the number land, restate the section title in plain language before continuing. Keep these dividers consistent so the audience can mentally bookmark.",
+  "Walk through the four-step process left to right at the audience's pace, not yours. After step four, summarise: 'so from start to finish, that's [duration].' If anyone's eyes are glazing over, this is where you'd shorten.",
+  "Roadmap. Don't commit to dates you can't keep — replace with quarters or 'H1 / H2' if you have to. Call out what's already done in past tense, what's actively in flight in present tense, and what's planned in future tense.",
+  "Comparison table. Read down the columns, not across the rows — it's faster. Highlight one row that surprises you most; that's the one the audience will remember.",
+  "Team slide. Name each person and one thing they're known for internally — humanises the team. If you have 30 seconds extra, mention how long the team has been working together.",
+  "Third section opener. Last divider before the close. If you're running long, this is the slide to drop entirely; the audience won't miss it.",
+  "Pricing. Anchor with the middle (Pro) tier — it's the one most people will pick. Don't apologise for the price; state it like you've stated it a hundred times. Pause for questions before moving on.",
+  "Customer quote. Read it aloud word for word — your voice gives it weight. Mention how you know this customer if you do; it builds trust.",
+  "Q&A. Repeat each question before answering so everyone hears it. If you don't know an answer, say so and offer to follow up by email. Close with the contact card on screen, then thank the room."
+]
+</script>
+
+</head>
+<body>
+
+<deck-stage width="1920" height="1080">
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       01 — TITLE SLIDE — outline Stewart bleed right, deep teal
+       ════════════════════════════════════════════════════════════════════ -->
+  <section data-screen-label="01 Title" class="s-title">
+    <div class="bleed-stewart"></div>
+    <div class="content-area">
+      <p class="eyebrow">[Event / context]</p>
+      <h1 class="h-title">[Your presentation title goes here, written as a full sentence in sentence case.]</h1>
+      <div class="meta">
+        <p class="body">[Presenter name] · [Role]</p>
+        <p class="caption">[Date] · [Audience]</p>
+      </div>
+    </div>
+    <div class="brand-mark">
+      <img src="logo/rewst-logo.png" alt="Rewst"/>
+    </div>
+    <div class="pageno on-light">01 / 16</div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       02 — AGENDA
+       ════════════════════════════════════════════════════════════════════ -->
+  <section data-screen-label="02 Agenda" class="s-agenda">
+    <div class="content-area">
+      <div class="lead">
+        <p class="eyebrow">Today</p>
+        <h2 class="h-2">Here's what we'll cover over the next [N] minutes.</h2>
+        <p class="body">[One-sentence framing of the conversation — what the audience should expect to walk away with.]</p>
+      </div>
+      <ol class="list">
+        <li>
+          <span class="num"></span>
+          <span class="label">[Section one — the problem space]</span>
+          <span class="dur">[5 min]</span>
+        </li>
+        <li>
+          <span class="num"></span>
+          <span class="label">[Section two — what's changing]</span>
+          <span class="dur">[10 min]</span>
+        </li>
+        <li>
+          <span class="num"></span>
+          <span class="label">[Section three — what it means for you]</span>
+          <span class="dur">[8 min]</span>
+        </li>
+        <li>
+          <span class="num"></span>
+          <span class="label">[Q &amp; A and next steps]</span>
+          <span class="dur">[7 min]</span>
+        </li>
+      </ol>
+    </div>
+    <div class="brand-mark">
+      <img src="logo/rewst-logo-ondark.png" alt="Rewst"/>
+    </div>
+    <div class="pageno on-dark">02 / 16</div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       03 — SECTION DIVIDER 01 — outline Stewart, big number
+       ════════════════════════════════════════════════════════════════════ -->
+  <section data-screen-label="03 Section 01" class="s-section">
+    <div class="bleed-stewart"></div>
+    <div class="content-area">
+      <div class="num">01</div>
+      <p class="eyebrow">Chapter one</p>
+      <h1 class="h-title">[Section one title — short declarative sentence that names the topic.]</h1>
+      <p class="body">[Optional one-sentence framing for the section.]</p>
+    </div>
+    <div class="brand-mark">
+      <img src="logo/rewst-logo.png" alt="Rewst"/>
+    </div>
+    <div class="pageno on-dark">03 / 16</div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       04 — BIG STAT — split panels
+       ════════════════════════════════════════════════════════════════════ -->
+  <section data-screen-label="04 Big Stat" class="s-stat">
+    <div class="content-area">
+      <div class="left">
+        <p class="eyebrow">[Metric label]</p>
+        <div class="stat-num"></div>
+        <h3 class="h-3" style="font-size: 64px"></h3>
+      </div>
+      <div class="card">
+        <p class="eyebrow">What that means</p>
+        <h3 class="h-3">[Translate the number into a tangible business outcome.]</h3>
+        <p class="body">[Two sentences of context. Where the number comes from, why it matters now, and what changes because of it.]</p>
+      </div>
+    </div>
+    <div class="brand-mark">
+      <img src="logo/rewst-logo-ondark.png" alt="Rewst"/>
+    </div>
+    <div class="pageno on-dark">04 / 16</div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       05 — TEXT + BULLETS — three columns
+       ════════════════════════════════════════════════════════════════════ -->
+  <section data-screen-label="05 Text + Bullets" class="s-bullets">
+    <div class="content-area">
+      <div>
+        <p class="eyebrow">[Topic eyebrow]</p>
+        <h2 class="h-2" style="margin-top:18px">[Three reasons this matters — written as one complete sentence.]</h2>
+      </div>
+      <ul class="bullets">
+        <li>
+          <h4 class="h-4">[Point one headline]</h4>
+          <p class="body-sm">[Two-sentence supporting body. Keep it short — the audience reads the headline, you say the rest aloud.]</p>
+        </li>
+        <li>
+          <h4 class="h-4">[Point two headline]</h4>
+          <p class="body-sm">[Two-sentence supporting body. Parallel structure to point one — same verb form, similar length.]</p>
+        </li>
+        <li>
+          <h4 class="h-4">[Point three headline]</h4>
+          <p class="body-sm">[Two-sentence supporting body. End with the strongest claim of the three — it's what they'll remember.]</p>
+        </li>
+      </ul>
+    </div>
+    <div class="brand-mark">
+      <img src="logo/rewst-logo-ondark.png" alt="Rewst"/>
+    </div>
+    <div class="pageno on-dark">05 / 16</div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       06 — TWO-COLUMN COMPARISON
+       ════════════════════════════════════════════════════════════════════ -->
+  <section data-screen-label="06 Comparison" class="s-compare">
+    <div class="content-area">
+      <div>
+        <p class="eyebrow">Before / after</p>
+        <h2 class="h-2" style="margin-top:18px">[The shift we're making — one sentence that frames both columns.]</h2>
+      </div>
+      <div class="cols">
+        <div class="col before" style="background-color: rgb(14, 61, 61)">
+          <p class="lbl">[Today / the status quo]</p>
+          <h3 class="h-3">[Short label for the painful state]</h3>
+          <ul>
+            <li>[Pain point one — short, concrete, measurable]</li>
+            <li>[Pain point two — same structure as point one]</li>
+            <li>[Pain point three — the one that hurts most]</li>
+            <li>[Pain point four — optional, drop if column is too long]</li>
+          </ul>
+        </div>
+        <div class="col after">
+          <p class="lbl">[After / the new approach]</p>
+          <h3 class="h-3">[Short label for the better state]</h3>
+          <ul>
+            <li>[Outcome one — mirror the structure of pain point one]</li>
+            <li>[Outcome two — mirror pain point two]</li>
+            <li>[Outcome three — mirror pain point three]</li>
+            <li>[Outcome four — optional, must mirror pain four]</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="brand-mark">
+      <img src="logo/rewst-logo-ondark.png" alt="Rewst"/>
+    </div>
+    <div class="pageno on-dark">06 / 16</div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       07 — IMAGE-LED FULL BLEED
+       ════════════════════════════════════════════════════════════════════ -->
+  <section data-screen-label="07 Image-led" class="s-image" style="background-color: #00BBB4">
+    <div class="content-area">
+      <div class="text">
+        <p class="eyebrow">[Eyebrow / proof point]</p>
+        <h1 class="h-title">[Big visual statement — one strong sentence that the illustration reinforces.]</h1>
+        <p class="body">[One or two supporting sentences. Keep the slide visual-first; let the speaker do the heavy lifting.]</p>
+      </div>
+      <div class="frame" style="padding: 0px; background-color: #00BBB4">
+        <img src="illustrations/Workflow-playbook.svg" alt="[Replace with relevant illustration]" style="object-fit: contain; width: 600px; height: 600px"/>
+      </div>
+    </div>
+    <div class="brand-mark">
+      <img src="logo/rewst-logo-ondark.png" alt="Rewst"/>
+    </div>
+    <div class="pageno on-dark">07 / 16</div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       08 — SECTION DIVIDER 02
+       ════════════════════════════════════════════════════════════════════ -->
+  <section data-screen-label="08 Section 02" class="s-section">
+    <div class="bleed-stewart"></div>
+    <div class="content-area">
+      <div class="num">02</div>
+      <p class="eyebrow">Chapter two</p>
+      <h1 class="h-title">[Section two title — keep the grammatical pattern parallel to section one.]</h1>
+      <p class="body">[Optional one-sentence framing.]</p>
+    </div>
+    <div class="brand-mark">
+      <img src="logo/rewst-logo.png" alt="Rewst"/>
+    </div>
+    <div class="pageno on-dark">08 / 16</div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       09 — PROCESS DIAGRAM — 4 steps
+       ════════════════════════════════════════════════════════════════════ -->
+  <section data-screen-label="09 Process" class="s-process">
+    <div class="content-area">
+      <div>
+        <p class="eyebrow">How it works</p>
+        <h2 class="h-2" style="margin-top:18px">[Process name] in four steps.</h2>
+      </div>
+      <div class="flow">
+        <div class="step">
+          <div class="badge">1</div>
+          <img class="ic" src="illustrations/Workflow-simple.svg" alt=""/>
+          <div class="ttl">[Step one verb]</div>
+          <div class="desc">[One-sentence description of what happens at this step and who's responsible.]</div>
+        </div>
+        <div class="step">
+          <div class="badge">2</div>
+          <img class="ic" src="illustrations/Object-gear-cloud.svg" alt=""/>
+          <div class="ttl">[Step two verb]</div>
+          <div class="desc">[One-sentence description — keep verbs parallel across the four steps.]</div>
+        </div>
+        <div class="step">
+          <div class="badge">3</div>
+          <img class="ic" src="illustrations/Workflow-progress.svg" alt=""/>
+          <div class="ttl">[Step three verb]</div>
+          <div class="desc">[One-sentence description. This is usually where the value lands.]</div>
+        </div>
+        <div class="step">
+          <div class="badge">4</div>
+          <img class="ic" src="illustrations/Chart-going-up.svg" alt=""/>
+          <div class="ttl">[Step four verb]</div>
+          <div class="desc">[One-sentence description of the outcome the process produces.]</div>
+        </div>
+      </div>
+    </div>
+    <div class="brand-mark">
+      <img src="logo/rewst-logo-ondark.png" alt="Rewst"/>
+    </div>
+    <div class="pageno on-dark">09 / 16</div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       10 — TIMELINE / ROADMAP
+       ════════════════════════════════════════════════════════════════════ -->
+  <section data-screen-label="10 Timeline" class="s-timeline">
+    <div class="content-area">
+      <div>
+        <p class="eyebrow">Roadmap</p>
+        <h2 class="h-2" style="margin-top:18px">[Initiative name] rolls out across [year / period].</h2>
+      </div>
+      <div class="rail">
+        <div class="qtr done">
+          <div class="dot"></div>
+          <div class="label">Q1 · Shipped</div>
+          <div class="heading">[Phase one name]</div>
+          <ul>
+            <li>[Milestone delivered]</li>
+            <li>[Milestone delivered]</li>
+            <li>[Milestone delivered]</li>
+          </ul>
+        </div>
+        <div class="qtr">
+          <div class="dot"></div>
+          <div class="label">Q2 · In flight</div>
+          <div class="heading">[Phase two name]</div>
+          <ul>
+            <li>[Milestone in progress]</li>
+            <li>[Milestone in progress]</li>
+            <li>[Milestone in progress]</li>
+          </ul>
+        </div>
+        <div class="qtr">
+          <div class="dot"></div>
+          <div class="label">Q3 · Planned</div>
+          <div class="heading">[Phase three name]</div>
+          <ul>
+            <li>[Milestone planned]</li>
+            <li>[Milestone planned]</li>
+            <li>[Milestone planned]</li>
+          </ul>
+        </div>
+        <div class="qtr">
+          <div class="dot"></div>
+          <div class="label">Q4 · Planned</div>
+          <div class="heading">[Phase four name]</div>
+          <ul>
+            <li>[Milestone planned]</li>
+            <li>[Milestone planned]</li>
+            <li>[Milestone planned]</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="brand-mark">
+      <img src="logo/rewst-logo-ondark.png" alt="Rewst"/>
+    </div>
+    <div class="pageno on-dark">10 / 16</div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       11 — TABLE / DATA GRID
+       ════════════════════════════════════════════════════════════════════ -->
+  <section data-screen-label="11 Table" class="s-table">
+    <div class="content-area">
+      <div>
+        <p class="eyebrow">At a glance</p>
+        <h2 class="h-2" style="margin-top:18px">[Comparison title — what's being compared and across what dimensions.]</h2>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>[Row dimension]</th>
+            <th>[Column A]</th>
+            <th>[Column B]</th>
+            <th>[Column C]</th>
+            <th>[Column D]</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>[Row 1 label]</td>
+            <td><span class="pill good">[Yes]</span></td>
+            <td><span class="pill muted">[No]</span></td>
+            <td><span class="pill good">[Yes]</span></td>
+            <td><span class="pill good">[Yes]</span></td>
+          </tr>
+          <tr>
+            <td>[Row 2 label]</td>
+            <td>[Value]</td>
+            <td>[Value]</td>
+            <td>[Value]</td>
+            <td>[Value]</td>
+          </tr>
+          <tr>
+            <td>[Row 3 label]</td>
+            <td><span class="pill warn">[Partial]</span></td>
+            <td><span class="pill muted">[No]</span></td>
+            <td><span class="pill good">[Yes]</span></td>
+            <td><span class="pill warn">[Partial]</span></td>
+          </tr>
+          <tr>
+            <td>[Row 4 label]</td>
+            <td>[Value]</td>
+            <td>[Value]</td>
+            <td>[Value]</td>
+            <td>[Value]</td>
+          </tr>
+          <tr>
+            <td>[Row 5 label]</td>
+            <td><span class="pill good">[Yes]</span></td>
+            <td><span class="pill good">[Yes]</span></td>
+            <td><span class="pill muted">[No]</span></td>
+            <td><span class="pill good">[Yes]</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="brand-mark">
+      <img src="logo/rewst-logo-ondark.png" alt="Rewst"/>
+    </div>
+    <div class="pageno on-dark">11 / 16</div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       12 — TEAM GRID — 4 people
+       ════════════════════════════════════════════════════════════════════ -->
+  <section data-screen-label="12 Team" class="s-team">
+    <div class="content-area">
+      <div>
+        <p class="eyebrow">Who's behind this</p>
+        <h2 class="h-2" style="margin-top:18px">Meet the team driving [project / initiative] forward.</h2>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <div class="avatar">[AB]</div>
+          <p class="name">[Person one name]</p>
+          <p class="role">[Role, team] · [Hook — one line about what they're known for]</p>
+        </div>
+        <div class="card">
+          <div class="avatar">[CD]</div>
+          <p class="name">[Person two name]</p>
+          <p class="role">[Role, team] · [Hook]</p>
+        </div>
+        <div class="card">
+          <div class="avatar">[EF]</div>
+          <p class="name">[Person three name]</p>
+          <p class="role">[Role, team] · [Hook]</p>
+        </div>
+        <div class="card">
+          <div class="avatar">[GH]</div>
+          <p class="name">[Person four name]</p>
+          <p class="role">[Role, team] · [Hook]</p>
+        </div>
+      </div>
+    </div>
+    <div class="brand-mark">
+      <img src="logo/rewst-logo-ondark.png" alt="Rewst"/>
+    </div>
+    <div class="pageno on-dark">12 / 16</div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       13 — SECTION DIVIDER 03
+       ════════════════════════════════════════════════════════════════════ -->
+  <section data-screen-label="13 Section 03" class="s-section">
+    <div class="bleed-stewart"></div>
+    <div class="content-area">
+      <div class="num">03</div>
+      <p class="eyebrow">Chapter three</p>
+      <h1 class="h-title">[Section three title — what this means for the audience.]</h1>
+      <p class="body">[Optional one-sentence framing.]</p>
+    </div>
+    <div class="brand-mark">
+      <img src="logo/rewst-logo.png" alt="Rewst"/>
+    </div>
+    <div class="pageno on-dark">13 / 16</div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       14 — PRICING TIERS — 3 plans
+       ════════════════════════════════════════════════════════════════════ -->
+  <section data-screen-label="14 Pricing" class="s-pricing">
+    <div class="content-area">
+      <div>
+        <p class="eyebrow">Plans</p>
+        <h2 class="h-2" style="margin-top:18px">[Pricing headline — who each tier is for, in one sentence.]</h2>
+      </div>
+      <div class="tiers">
+        <div class="tier">
+          <p class="name">[Starter]</p>
+          <div class="price">$[XX]<span class="per">/ [unit] / mo</span></div>
+          <p class="desc">[One sentence describing who this tier fits — keep it short.]</p>
+          <ul>
+            <li>[Feature one — what's included]</li>
+            <li>[Feature two]</li>
+            <li>[Feature three]</li>
+            <li>[Feature four]</li>
+          </ul>
+        </div>
+        <div class="tier feature">
+          <span class="ribbon">Most popular</span>
+          <p class="name">[Pro]</p>
+          <div class="price">$[XXX]<span class="per">/ [unit] / mo</span></div>
+          <p class="desc">[One sentence — the tier most customers will land on.]</p>
+          <ul>
+            <li>[Everything in Starter, plus:]</li>
+            <li>[Feature five]</li>
+            <li>[Feature six]</li>
+            <li>[Feature seven]</li>
+            <li>[Feature eight]</li>
+          </ul>
+        </div>
+        <div class="tier">
+          <p class="name">[Enterprise]</p>
+          <div class="price">[Contact us]</div>
+          <p class="desc">[One sentence — for the largest customers with bespoke needs.]</p>
+          <ul>
+            <li>[Everything in Pro, plus:]</li>
+            <li>[Feature nine]</li>
+            <li>[Feature ten]</li>
+            <li>[Dedicated CSM]</li>
+            <li>[Custom SLAs]</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="brand-mark">
+      <img src="logo/rewst-logo-ondark.png" alt="Rewst"/>
+    </div>
+    <div class="pageno on-dark">14 / 16</div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       15 — QUOTE / TESTIMONIAL
+       ════════════════════════════════════════════════════════════════════ -->
+  <section data-screen-label="15 Quote" class="s-quote">
+    <div class="content-area">
+      <div class="lead">
+        <p class="eyebrow">Real talk</p>
+        <h2 class="h-2">In the words of a customer.</h2>
+      </div>
+      <div class="qbox">
+        <div class="qmark">
+          <img src="illustrations/Community-quote.svg" alt=""/>
+        </div>
+        <p class="qtext">"[The customer quote goes here — keep it 30 to 60 words. Specific outcomes land harder than generic praise; a number or named workflow makes the quote feel real instead of marketing-approved.]"</p>
+        <p class="qname">[Customer name]</p>
+        <p class="qrole">[Role] · [Company]</p>
+      </div>
+    </div>
+    <div class="brand-mark">
+      <img src="logo/rewst-logo-ondark.png" alt="Rewst"/>
+    </div>
+    <div class="pageno on-dark">15 / 16</div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       16 — Q&A + CLOSING (combined with outline Stewart bottom-left)
+       ════════════════════════════════════════════════════════════════════ -->
+  <section data-screen-label="16 Q&amp;A + Close" class="s-close">
+    <div class="content-area">
+      <div>
+        <p class="eyebrow" style="color:var(--t-accent-soft)">Open the floor</p>
+        <h1 class="h-title">Questions?</h1>
+        <p class="body">[Reframe the one question you most want the room to ask — it primes them to engage.]</p>
+      </div>
+      <div>
+        <div class="cta-card">
+          <p class="lbl">Stay in touch</p>
+          <h3 class="h-3">[Closing call to action — what you want the audience to do next.]</h3>
+          <div class="contacts">
+            <div><strong>Email</strong>[hello@rewst.com]</div>
+            <div><strong>Web</strong>[rewst.com]</div>
+            <div><strong>Presenter</strong>[Name] · [@handle]</div>
+            <div><strong>Follow up</strong>[Link to deck / docs]</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="brand-mark">
+      <img src="logo/rewst-logo-ondark.png" alt="Rewst"/>
+    </div>
+    <div class="pageno on-dark">16 / 16</div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       LIGHT VARIANTS — cream-background alternates of common layouts.
+       Add class="theme-light" to flip any slide; drag/duplicate these into
+       your flow as needed.
+       ════════════════════════════════════════════════════════════════════ -->
+
+  <!-- L1 — AGENDA (light) -->
+  <section data-screen-label="L1 Agenda · Light" class="s-agenda theme-light">
+    <div class="content-area">
+      <div class="lead">
+        <p class="eyebrow">Today</p>
+        <h2 class="h-2">Here's what we'll cover over the next [N] minutes.</h2>
+        <p class="body">[One-sentence framing of the conversation — what the audience should expect to walk away with.]</p>
+      </div>
+      <ol class="list">
+        <li>
+          <span class="num"></span>
+          <span class="label">[Section one — the problem space]</span>
+          <span class="dur">[5 min]</span>
+        </li>
+        <li>
+          <span class="num"></span>
+          <span class="label">[Section two — what's changing]</span>
+          <span class="dur">[10 min]</span>
+        </li>
+        <li>
+          <span class="num"></span>
+          <span class="label">[Section three — what it means for you]</span>
+          <span class="dur">[8 min]</span>
+        </li>
+        <li>
+          <span class="num"></span>
+          <span class="label">[Q &amp; A and next steps]</span>
+          <span class="dur">[7 min]</span>
+        </li>
+      </ol>
+    </div>
+    <div class="brand-mark">
+      <img src="logo/rewst-logo.png" alt="Rewst"/>
+    </div>
+    <div class="pageno on-light">LIGHT · 01</div>
+  </section>
+
+  <!-- L2 — BIG STAT (light) -->
+  <section data-screen-label="L2 Big Stat · Light" class="s-stat theme-light">
+    <div class="content-area">
+      <div class="left">
+        <p class="eyebrow">[Metric label]</p>
+        <div class="stat-num"></div>
+        <h3 class="h-3" style="font-size: 64px"></h3>
+      </div>
+      <div class="card">
+        <p class="eyebrow">What that means</p>
+        <h3 class="h-3">[Translate the number into a tangible business outcome.]</h3>
+        <p class="body">[Two sentences of context. Where the number comes from, why it matters now, and what changes because of it.]</p>
+      </div>
+    </div>
+    <div class="brand-mark">
+      <img src="logo/rewst-logo.png" alt="Rewst"/>
+    </div>
+    <div class="pageno on-light">LIGHT · 02</div>
+  </section>
+
+  <!-- L3 — TEXT + BULLETS (light) -->
+  <section data-screen-label="L3 Bullets · Light" class="s-bullets theme-light">
+    <div class="content-area">
+      <div>
+        <p class="eyebrow">[Topic eyebrow]</p>
+        <h2 class="h-2" style="margin-top:18px">[Three reasons this matters — written as one complete sentence.]</h2>
+      </div>
+      <ul class="bullets">
+        <li>
+          <h4 class="h-4">[Point one headline]</h4>
+          <p class="body-sm">[Two-sentence supporting body. Keep it short — the audience reads the headline, you say the rest aloud.]</p>
+        </li>
+        <li>
+          <h4 class="h-4">[Point two headline]</h4>
+          <p class="body-sm">[Two-sentence supporting body. Parallel structure to point one — same verb form, similar length.]</p>
+        </li>
+        <li>
+          <h4 class="h-4">[Point three headline]</h4>
+          <p class="body-sm">[Two-sentence supporting body. End with the strongest claim of the three — it's what they'll remember.]</p>
+        </li>
+      </ul>
+    </div>
+    <div class="brand-mark">
+      <img src="logo/rewst-logo.png" alt="Rewst"/>
+    </div>
+    <div class="pageno on-light">LIGHT · 03</div>
+  </section>
+
+  <!-- L4 — TEAM GRID (light) -->
+  <section data-screen-label="L4 Team · Light" class="s-team theme-light">
+    <div class="content-area">
+      <div>
+        <p class="eyebrow">Who's behind this</p>
+        <h2 class="h-2" style="margin-top:18px">Meet the team driving [project / initiative] forward.</h2>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <div class="avatar">[AB]</div>
+          <p class="name">[Person one name]</p>
+          <p class="role">[Role, team] · [Hook — one line about what they're known for]</p>
+        </div>
+        <div class="card">
+          <div class="avatar">[CD]</div>
+          <p class="name">[Person two name]</p>
+          <p class="role">[Role, team] · [Hook]</p>
+        </div>
+        <div class="card">
+          <div class="avatar">[EF]</div>
+          <p class="name">[Person three name]</p>
+          <p class="role">[Role, team] · [Hook]</p>
+        </div>
+        <div class="card">
+          <div class="avatar">[GH]</div>
+          <p class="name">[Person four name]</p>
+          <p class="role">[Role, team] · [Hook]</p>
+        </div>
+      </div>
+    </div>
+    <div class="brand-mark">
+      <img src="logo/rewst-logo.png" alt="Rewst"/>
+    </div>
+    <div class="pageno on-light">LIGHT · 04</div>
+  </section>
+
+</deck-stage>
+
+</body>
+</html>
