@@ -1746,3 +1746,67 @@
     customElements.define('deck-stage', DeckStage);
   }
 })();
+
+/* ===========================================================================
+   Headline autofit — shrink oversized headlines to fit their slide.
+   The s-image, s-quote, and s-close headlines default to the s-section
+   divider size (96px). When authored copy runs longer than the layout was
+   designed for, the slide's .content-area overflows its fixed 1080px frame;
+   this routine steps the headline's font-size down (2px at a time, to a
+   floor) until the content fits again. It never grows text, only shrinks.
+
+   - Runs at DOMContentLoaded and again after web fonts load (font metrics
+     change wrap points). The PDF/PPTX exporter awaits document.fonts.ready
+     before capturing, so exports see the fitted size, and the editable-PPTX
+     text extraction reads computed styles, so the shrunk size flows through.
+   - Slides are stacked with visibility:hidden (never display:none), so
+     measurement works on non-active slides too.
+   - Opt extra elements in with data-fit-down; override the floor with
+     data-fit-min="<px>" (default: 60% of the starting size).
+   ======================================================================== */
+(() => {
+  const FIT_SELECTORS = [
+    '[data-fit-down]',
+    '.s-image .text .h-title',
+    '.s-quote .lead .h-2',
+    '.s-close .h-title',
+  ].join(', ');
+
+  function overflows(area) {
+    return area.scrollHeight > area.clientHeight + 1
+        || area.scrollWidth > area.clientWidth + 1;
+  }
+
+  function fitSlide(section) {
+    const area = section.querySelector('.content-area');
+    const targets = section.querySelectorAll(FIT_SELECTORS);
+    if (!area || !targets.length) return;
+    // Reset any previous pass first so re-runs (e.g. after fonts load or
+    // copy edits) can settle on the largest size that fits.
+    targets.forEach((el) => { el.style.fontSize = ''; });
+    targets.forEach((el) => {
+      if (!overflows(area)) return;
+      const start = parseFloat(getComputedStyle(el).fontSize);
+      if (!start) return;
+      const min = parseFloat(el.dataset.fitMin || '') || Math.round(start * 0.6);
+      let size = start;
+      while (overflows(area) && size - 2 >= min) {
+        size -= 2;
+        el.style.fontSize = size + 'px';
+      }
+    });
+  }
+
+  function run() {
+    document.querySelectorAll('deck-stage > section').forEach(fitSlide);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', run);
+  } else {
+    run();
+  }
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => requestAnimationFrame(run));
+  }
+})();

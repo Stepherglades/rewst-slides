@@ -307,6 +307,55 @@ _EXTRACT_JS = r"""
                        && cs.justifyContent === "center" && cs.alignItems === "center";
       let bx = r.left - sr.left + pl, by = r.top - sr.top + pt;
       let bw = r.width - pl - pr, bh = r.height - pt - pb;
+      // List markers: for a real <ol>/<ul> item whose marker is a plain number or
+      // a plain bullet, emit a NATIVE, editable PPTX marker (PowerPoint draws it)
+      // instead of baking it into the background. Custom/semantic glyphs (✓/✕ etc.)
+      // are left exactly as before — baked, with the box shifted past them.
+      // List markers: for a real <ol>/<ul> item, reproduce the marker as a NATIVE,
+      // editable PPTX marker (PowerPoint draws it) so it reflows and stays aligned
+      // when the text is edited — the whole point of the editable PPTX. We read the
+      // item's actual ::before to recover the glyph + brand color:
+      //   • an SVG check/cross (compare, pricing)  -> ✓ / ✕ in the SVG's stroke color
+      //   • a solid bar/dot (timeline)             -> – / • in that color
+      //   • a genuine text glyph                   -> that glyph
+      // Ordered lists get a real auto-number. The exact SVG stroke shape isn't
+      // pixel-reproduced (Unicode glyph instead) — an accepted trade for editability.
+      let bullet = null, marL = 0;
+      if (e.tagName === "LI") {
+        const listEl = e.closest("ol, ul");
+        if (listEl) {
+          if (listEl.tagName === "OL") {
+            // Each item is its own text box, so numbering can't count across boxes —
+            // pin the value with startAt. Still a real auto-number: reflows, and
+            // re-typing keeps it numeric.
+            const idx = [...listEl.children].filter(c => c.tagName === "LI").indexOf(e) + 1;
+            bullet = { kind: "num", scheme: "arabicPeriod", startAt: idx > 0 ? idx : 1 };
+          } else {
+            const hexToRgb = (h) => { const n = parseInt(h, 16);
+              return `rgb(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255})`; };
+            const bcs = getComputedStyle(e, "::before");
+            const raw = (bcs.content || "").replace(/^["']|["']$/g, "").trim();
+            const bgImg = bcs.backgroundImage || "";
+            const bgCol = bcs.backgroundColor || "";
+            let glyph = null, gcolor = null;
+            if (raw && raw !== "none" && raw !== "normal") {
+              glyph = raw; gcolor = bcs.color;                 // a genuine text glyph
+            } else if (bgImg && bgImg !== "none" && bgImg.indexOf("url(") === 0) {
+              const cm = bgImg.match(/(?:stroke|fill)=['"]?%23([0-9A-Fa-f]{6})/);
+              gcolor = cm ? hexToRgb(cm[1]) : bcs.color;       // SVG marker
+              if (/polyline/i.test(bgImg)) glyph = "\u2713";        // ✓ check
+              else if ((bgImg.match(/<line/gi) || []).length >= 2) glyph = "\u2715"; // ✕ cross
+              else glyph = "\u2022";                                 // • fallback
+            } else if (bgCol && bgCol !== "transparent" && bgCol !== "rgba(0, 0, 0, 0)") {
+              const w = parseFloat(bcs.width) || 0, h = parseFloat(bcs.height) || 0;
+              glyph = (w > h * 1.5) ? "\u2013" : "\u2022";     // – bar, else • dot
+              gcolor = bgCol;
+            }
+            if (glyph) bullet = { kind: "char", char: glyph, color: gcolor };
+            // no detectable marker (e.g. a card list) -> leave unchanged, no bullet
+          }
+        }
+      }
       if (!centered) {
         // Horizontal only: start the box at the ACTUAL text, clearing any marker
         // in front of it (a list's left padding OR an inline ::before ✓/✕/• flex
@@ -317,11 +366,23 @@ _EXTRACT_JS = r"""
           const rng = document.createRange(); rng.selectNodeContents(e);
           const tr = rng.getBoundingClientRect();
           if (tr && tr.width > 0.5 && tr.height > 0.5) {
-            bx = tr.left - sr.left;
-            bw = Math.max((r.right - pr) - tr.left, tr.width);
+            if (bullet) {
+              // Anchor the box at the item's border box — the marker origin, where
+              // the design's ::before sits (a padded list's bx is otherwise on the
+              // content box, past the marker) — and record the marker-to-text gap
+              // as the hanging indent, so PowerPoint's native marker lands where
+              // the design's did, with the design's gap before the text begins.
+              bx = r.left - sr.left;
+              bw = r.width - pr;
+              marL = Math.max((tr.left - sr.left) - bx, 0);
+            } else {
+              bx = tr.left - sr.left;
+              bw = Math.max((r.right - pr) - tr.left, tr.width);
+            }
           }
         } catch (_) {}
       }
+      if (bullet) e.setAttribute("data-edit-marker", "1");
       out.push({
         s: si, x: bx, y: by, w: bw, h: bh,
         text: txt, lines: visualLines(e),
@@ -329,7 +390,40 @@ _EXTRACT_JS = r"""
         color: cs.color, align: cs.textAlign, family: cs.fontFamily,
         transform: cs.textTransform, lh: cs.lineHeight, ls: cs.letterSpacing,
         footer: !!e.closest(".pageno, .brand-mark"),
-        centered: centered
+        centered: centered,
+        bullet: bullet, marL: marL
+      });
+    });
+  });
+  return out;
+}
+"""
+
+
+# Decorative timeline/roadmap dots. These are the small colored circles that sit
+# under each column's label on the s-timeline archetype. Left baked into the
+# background they can't be recolored or nudged in PowerPoint, so we lift each one
+# into a NATIVE, editable PPTX oval at its exact position/size/color and mark it
+# (data-edit-shape) so it's dropped from the background screenshot. Scoped to the
+# timeline dots only — the footer Bot Teal dot is a section::after pseudo-element,
+# not a .dot, so it's untouched here (it gets its own native oval below).
+_SHAPES_JS = r"""
+() => {
+  const sections = [...document.querySelectorAll("deck-stage > section")];
+  const out = [];
+  sections.forEach((sec, si) => {
+    if (!sec.classList.contains("s-timeline")) return;
+    const sr = sec.getBoundingClientRect();
+    sec.querySelectorAll(".qtr .dot").forEach(e => {
+      const r = e.getBoundingClientRect();
+      if (r.width < 1 || r.height < 1) return;
+      const cs = getComputedStyle(e);
+      e.setAttribute("data-edit-shape", "1");
+      out.push({
+        s: si,
+        x: r.left - sr.left, y: r.top - sr.top,
+        w: r.width, h: r.height,
+        color: cs.backgroundColor
       });
     });
   });
@@ -503,6 +597,8 @@ def _render_textless_and_extract(deck_path, scale=2):
             except Exception:
                 pass
             boxes = pg.evaluate(_EXTRACT_JS)
+            # decorative timeline dots -> lifted to native ovals (see _SHAPES_JS)
+            shapes = pg.evaluate(_SHAPES_JS)
             # which slides carry the Bot Teal anchor dot (all except .no-teal-dot)
             has_dot = pg.evaluate("() => [...document.querySelectorAll('deck-stage > section')]"
                                   ".map(s => !s.classList.contains('no-teal-dot'))")
@@ -510,9 +606,14 @@ def _render_textless_and_extract(deck_path, scale=2):
             # markers). All text lifts into native boxes — including the agenda
             # numbers, whose CSS counter is hidden here and re-emitted as real text.
             # Drop the baked footer dot here — the editable PPTX draws it as a native
-            # centered shape instead, so it can never sit off-center.
+            # centered shape instead, so it can never sit off-center. The timeline
+            # column dots (data-edit-shape) are likewise dropped and redrawn native.
             pg.add_style_tag(content="[data-edit-hide]{color:transparent !important;"
                                      "text-shadow:none !important;}"
+                                     "[data-edit-shape]{visibility:hidden !important;}"
+                                     "[data-edit-marker]::before{display:none !important;}"
+                                     "[data-edit-marker]::marker{color:transparent !important;}"
+                                     "[data-edit-marker]{list-style:none !important;}"
                                      "deck-stage section::after{content:none !important;}")
             for i, sec in enumerate(pg.query_selector_all("deck-stage > section"), 1):
                 out = os.path.join(pngdir, f"bg-{i:02d}.png")
@@ -521,7 +622,7 @@ def _render_textless_and_extract(deck_path, scale=2):
     finally:
         if os.path.exists(tmp):
             os.remove(tmp)
-    return pngs, boxes, has_dot, pngdir
+    return pngs, boxes, shapes, has_dot, pngdir
 
 
 def export_editable(deck_path, out_base, scale=2):
@@ -533,7 +634,7 @@ def export_editable(deck_path, out_base, scale=2):
     from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
     from pptx.enum.shapes import MSO_SHAPE
     from pptx.oxml.ns import qn
-    pngs, boxes, has_dot, pngdir = _render_textless_and_extract(deck_path, scale=scale)
+    pngs, boxes, shapes, has_dot, pngdir = _render_textless_and_extract(deck_path, scale=scale)
     try:
         if not pngs:
             print("No slides rendered.", file=sys.stderr); return False
@@ -549,6 +650,9 @@ def export_editable(deck_path, out_base, scale=2):
         by_slide = {}
         for bx in boxes:
             by_slide.setdefault(bx["s"], []).append(bx)
+        shapes_by_slide = {}
+        for sh in shapes:
+            shapes_by_slide.setdefault(sh["s"], []).append(sh)
 
         for i, png in enumerate(pngs):
             s = prs.slides.add_slide(blank)
@@ -619,6 +723,29 @@ def export_editable(deck_path, out_base, scale=2):
                     f.name = fam
                     f.bold = fbold
                     f.color.rgb = RGBColor.from_string(fcolor)
+                # Native, editable list marker — PowerPoint draws the bullet/number
+                # itself. marL/indent give the hanging indent so wrapped lines align
+                # under the text, and the marker lands where the design's did. Emit
+                # pPr children in schema order: buClr -> buFont -> buChar|buAutoNum.
+                b = bx.get("bullet")
+                if b:
+                    pPr = para._p.get_or_add_pPr()
+                    marL_emu = int(max(bx.get("marL", 0) or 0, 0) * EMU_PER_PX)
+                    if marL_emu > 0:
+                        pPr.set("marL", str(marL_emu))
+                        pPr.set("indent", str(-marL_emu))
+                    mcolor = _rgb_hex(b.get("color") or bx["color"])
+                    buClr = pPr.makeelement(qn("a:buClr"), {})
+                    buClr.append(pPr.makeelement(qn("a:srgbClr"), {"val": mcolor}))
+                    pPr.append(buClr)
+                    if b.get("kind") == "num":
+                        pPr.append(pPr.makeelement(qn("a:buFont"), {"typeface": fam}))
+                        pPr.append(pPr.makeelement(qn("a:buAutoNum"),
+                                                   {"type": b.get("scheme", "arabicPeriod"),
+                                                    "startAt": str(b.get("startAt", 1))}))
+                    else:
+                        pPr.append(pPr.makeelement(qn("a:buFont"), {"typeface": "Arial"}))
+                        pPr.append(pPr.makeelement(qn("a:buChar"), {"char": b.get("char", "•")}))
             # Bot Teal anchor dot — native shape, locked to the exact footer center
             # (x = 960px of 1920, 18px circle, 54px up from the bottom). Independent
             # of the background, so it is always perfectly centered.
@@ -633,6 +760,23 @@ def export_editable(deck_path, out_base, scale=2):
                 dot.line.fill.background()
                 try:
                     dot.shadow.inherit = False
+                except Exception:
+                    pass
+            # Timeline column dots — native, editable ovals lifted out of the
+            # background so they can be recolored or moved in PowerPoint. Each keeps
+            # the design's exact position, size, and fill (the source dots were
+            # dropped from the background screenshot above).
+            for sh in shapes_by_slide.get(i, []):
+                oval = s.shapes.add_shape(
+                    MSO_SHAPE.OVAL,
+                    Emu(int(sh["x"] * EMU_PER_PX)), Emu(int(sh["y"] * EMU_PER_PX)),
+                    Emu(int(max(sh["w"], 1) * EMU_PER_PX)),
+                    Emu(int(max(sh["h"], 1) * EMU_PER_PX)))
+                oval.fill.solid()
+                oval.fill.fore_color.rgb = RGBColor.from_string(_rgb_hex(sh["color"]))
+                oval.line.fill.background()
+                try:
+                    oval.shadow.inherit = False
                 except Exception:
                     pass
             if i < len(notes) and notes[i]:

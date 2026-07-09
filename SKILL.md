@@ -119,9 +119,11 @@ A single `export` (no flags needed) always writes **three** deliverables:
 
 1. `<deckname>.pdf` — one page per slide, full fidelity. The share/print format.
 2. `<deckname>-editable.pptx` — **editable** PowerPoint: the design (teal fields,
-   Stewart bleed, illustrations, cards, dividers, dots, generated marks) is a
+   Stewart bleed, illustrations, cards, dividers, generated marks) is a
    full-bleed background image, and **every piece of copy is a native, editable
-   text box** in the correct Rewst font, size, color, and position.
+   text box** in the correct Rewst font, size, color, and position. The footer
+   Bot Teal dot and the timeline column dots are native, editable ovals too (not
+   baked), so they can be recolored or nudged in PowerPoint.
 3. `<deckname>-html.zip` — the **editable source**: the HTML plus its asset kit,
    zipped. Unzip and open the HTML in a browser to view/edit/re-render.
 
@@ -138,14 +140,14 @@ Tradeoffs to mention when handing over the **editable** PPTX:
   balanced wrap points in as hard breaks), so headlines wrap the same as the PDF —
   no widows and no re-flow crowding the line below. Re-typing a headline replaces
   those breaks with PowerPoint's own wrapping.
-- List bullets/numbers are drawn in the background; the text sits in a native box
-  positioned just after the marker (with the hanging indent preserved). Alignment
-  is correct in the generated file — if a viewer re-flows it on import, regenerate
-  from the current skill.
-- Decorative marks live in the background, so they're not editable — the bullet
-  and ✓/✕ list markers, indicator dots, and Stewart art. **All actual text is
-  editable**, including the agenda's auto-numbers (their CSS counter is resolved
-  into a real text box on export).
+- List bullets, numbers, and ✓/✕ markers are **native, editable PPTX markers**
+  (drawn by PowerPoint), so they reflow and stay aligned when the list text is
+  edited; the hanging indent is preserved and re-typing an item keeps its marker.
+- The only decorative mark that stays baked into the background — and so isn't
+  editable — is the Stewart art. The footer indicator dot and the s-timeline
+  column dots are native, editable ovals (recolor or move them freely). **All
+  actual text is editable**, including the list markers above and the agenda's
+  auto-numbers (their CSS counter is resolved into a real text box on export).
 
 ### 7. Present the results
 Share all three: the **PDF**, the **editable `-editable.pptx`**, and the

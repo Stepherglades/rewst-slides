@@ -16,6 +16,7 @@
   --t-accent-deep:  #432800;
   --t-coral:        #F15B5B;  /* Alert Coral — canonical */
   --t-divider:      rgba(165,223,223,0.18);
+  --brand-teal:     #00BBB4;  /* primary Bot Teal — fixed; NOT remapped by theme-light */
 
   --font-heading:   "Poppins", "Goldplay", system-ui, sans-serif;
   --font-body:      "Montserrat", system-ui, sans-serif;
@@ -307,6 +308,7 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
 }
 .s-agenda .lead .eyebrow { margin-bottom: 28px; }
 .s-agenda .lead .h-2 { color: var(--t-headline); }
+.s-agenda.theme-light .lead .h-2 { color: var(--brand-teal); } /* light variant: primary #00BBB4 */
 .s-agenda .lead .body { color: var(--t-body-on-dark); margin-top: 28px; max-width: 460px; }
 .s-agenda ol.list {
   list-style: none;
@@ -371,11 +373,11 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   font-family: var(--font-heading);
   font-weight: 800;
   font-size: 72px;
-  color: var(--c-teal-dark);
+  color: var(--c-brown);
   line-height: 1;
   letter-spacing: -0.02em;
 }
-.s-section .eyebrow { color: var(--c-teal-dark); margin-bottom: 28px; }
+.s-section .eyebrow { color: var(--c-brown); margin-bottom: 28px; }
 .s-section .h-title { color: var(--c-brown-dark); margin-top: 28px; max-width: 980px; }
 .s-section .body { color: var(--c-brown-dark); margin-top: 32px; max-width: 760px; opacity: 0.85; }
 
@@ -392,6 +394,7 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
 .s-stat .left { display: flex; flex-direction: column; gap: 28px; }
 .s-stat .left .eyebrow { color: var(--t-accent-soft); }
 .s-stat .stat-num {
+  margin-top: 28px; /* eyebrow → stat gap is ~2x the stat → headline gap (56px effective) */
   font-family: var(--font-heading);
   font-weight: 700;
   font-size: var(--type-stat);
@@ -419,6 +422,7 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
 .s-bullets .content-area { display: flex; flex-direction: column; gap: 50px; }
 .s-bullets .eyebrow { color: var(--t-headline); }
 .s-bullets .h-2 { color: var(--t-headline-soft); max-width: 1500px; }
+.s-bullets.theme-light .h-2 { color: var(--brand-teal); } /* light variant: primary #00BBB4 */
 .s-bullets ul.bullets {
   list-style: none;
   margin: 0;
@@ -511,7 +515,7 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
 }
 .s-image .text { display: flex; flex-direction: column; gap: 28px; }
 .s-image .text .eyebrow { color: var(--t-headline); }
-.s-image .text .h-title { color: #fff; font-size: 80px; }
+.s-image .text .h-title { color: #fff; font-size: var(--type-title); }  /* matches s-section divider (96px); autofit shrinks if copy runs long */
 .s-image .text .body { color: var(--t-body-on-dark); max-width: 600px; }
 .s-image .frame {
   background: var(--t-headline);
@@ -608,7 +612,7 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
 .s-timeline .qtr { padding: 0 24px 0 0; position: relative; }
 .s-timeline .qtr .dot {
   position: absolute;
-  top: 80px; left: 18px;
+  top: 48px; left: 0;
   width: 22px; height: 22px;
   border-radius: 50%;
   background: var(--t-accent);
@@ -884,7 +888,15 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   align-items: center;
 }
 .s-quote .lead .eyebrow { color: var(--t-accent-soft); }
-.s-quote .lead .h-2 { color: var(--t-accent); margin-top: 28px; }
+.s-quote .lead .h-2 {
+  color: var(--t-accent);
+  margin-top: 28px;
+  /* Sized to match the s-section divider title (96px / 1.02 / -0.015em);
+     autofit shrinks it if copy runs long. */
+  font-size: var(--type-title);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+}
 .s-quote .qbox {
   background: var(--t-headline-soft);
   border-radius: 50px;
@@ -975,9 +987,17 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   gap: 50px;
   padding: var(--pad-top) var(--pad-x) 0;  /* symmetric 110px gutters — no left Stewart to clear */
 }
+.s-close .content-area > div:first-child {
+  /* Left column (eyebrow / Questions? / body) rides the vertical middle of
+     the slide instead of hugging the top; the CTA card column is unaffected. */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.s-close .eyebrow { margin-bottom: 28px; }  /* breathing room above the headline, matching s-section */
 .s-close .h-title {
   color: var(--t-headline);
-  font-size: 120px;
+  font-size: var(--type-title);  /* matches the s-section divider title (was 120px) */
   letter-spacing: -0.02em;
 }
 .s-close .body {
@@ -1037,7 +1057,8 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
 .theme-light .s-stat .card .eyebrow { color: var(--t-headline); }
 .theme-light .s-stat .card .h-3 { color: var(--t-headline-soft); }
 .theme-light .s-stat .card .body { color: var(--t-body-on-dark); }
-.theme-light .s-stat .left .eyebrow { color: var(--c-brown); }
+.s-stat.theme-light .left .eyebrow { color: var(--t-accent); }      /* Trigger Amber #F9A100 */
+.s-stat.theme-light .stat-num { color: var(--brand-teal); }         /* primary Bot Teal #00BBB4 */
 
 /* Team: white cards with a soft shadow so they read on cream. Avatars keep the
    base full-spectrum primary fills (teal / orange / coral / indigo). */

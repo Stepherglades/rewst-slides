@@ -15,10 +15,10 @@ auto-scaling are handled by `deck-stage.js` — leave it wired up.
 | # | Class | Use it for | Where Bot Teal lives |
 |---|-------|-----------|----------------------|
 | 01 | `s-title` | **Opening slide — required on every deck** | Tone-on-tone teal field + bleed Stewart |
-| 02 | `s-agenda` | What we'll cover, with timings | Numbers + lead headline |
-| 03 | `s-section` | Chapter / section divider (amber) | Indicator dot (number is teal-dark) |
+| 02 | `s-agenda` | What we'll cover, with timings | Numbers + lead headline (light variant: headline in primary `#00BBB4`) |
+| 03 | `s-section` | Chapter / section divider (amber) | Indicator dot (number/eyebrow in mid brown, distinct from the deeper title) |
 | 04 | `s-stat` | One hero number + what it means | Indicator dot (number is amber) |
-| 05 | `s-bullets` | Three parallel points | Eyebrow + point headlines |
+| 05 | `s-bullets` | Three parallel points | Eyebrow + point headlines (light variant: lead headline in primary `#00BBB4`) |
 | 06 | `s-compare` | Before / after, two columns | Eyebrow + headline |
 | 07 | `s-image` | Big visual statement + illustration | Full `#00BBB4` background |
 | 08 | `s-section` | Second section divider | Indicator dot |
@@ -55,12 +55,20 @@ Any slide flips to a cream background by adding `theme-light` to its class
 (`class="s-agenda theme-light"`). The template includes ready-made light
 versions of Agenda, Big Stat, Bullets, and Team at the end — duplicate or move
 them into the flow as needed. On light slides the eyebrow/number teal softens
-for contrast, so these rely on the indicator dot for the Bot Teal rule.
+for contrast — except the Agenda and Bullets lead headlines, which use primary
+`#00BBB4` on their light variants (and mean those two slides carry primary teal
+directly). Other light slides rely on the indicator dot for the Bot Teal rule.
 
 ## Authoring notes
 
 - **Pick, don't pad.** A 6-slide deck is fine. Delete the sections you don't
   use; renumber the `.pageno` (e.g. `04 / 16` → `04 / 08`) so it stays honest.
+- **Headline sizing is uniform on the statement slides.** The `s-image`,
+  `s-quote`, and `s-close` headlines all default to the `s-section` divider
+  size (96px). If authored copy runs longer than the layout holds, an autofit
+  pass in `deck-stage.js` steps that headline down (to a floor of ~60%) until
+  the slide fits — it never enlarges text. Opt any other element in with
+  `data-fit-down` (optional `data-fit-min="<px>"` overrides the floor).
 - **Speaker notes** live in the JSON array `#speaker-notes` at the top of the
   file — index `N` maps to slide `N`. Keep its length in sync with the slides
   you keep; the exporter copies these into the PPTX notes pane.
