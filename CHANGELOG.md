@@ -8,6 +8,15 @@ uses simple `vMAJOR.MINOR` release tags.
 
 _Nothing yet._
 
+## [1.3.1] — 2026-07-10
+
+### Added
+- Montserrat `.ttf` files (Regular, Medium, SemiBold, Bold, Black) in
+  `assets/fonts/`. `scripts/deck.py` auto-detects and embeds them at render
+  time, so PDF and PPTX exports now use the real body font instead of a
+  system-sans fallback. The live HTML deck was already unaffected (it loads
+  Montserrat from Google Fonts).
+
 ## [1.3] — 2026-07-09
 
 ### Changed
