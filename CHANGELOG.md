@@ -6,7 +6,30 @@ uses simple `vMAJOR.MINOR` release tags.
 
 ## [Unreleased]
 
-_Nothing yet._
+### Added
+- **Rewst PowerPoint template embedded in the editable PPTX.** The export is
+  now built on `assets/template/rewst-slides.potx`, so the delivered file
+  carries the branded slide master, six branded layouts (title, content_dark,
+  section divider, big statement, quote, content_light), and the theme palette
+  anchored on Bot Teal `#00BBB4`. Generated slides are visually unchanged
+  (design background + explicit text styling as before); the layouts exist so
+  hand-added slides in PowerPoint pick up on-brand color, type, and placement.
+  Cloned layout placeholders are stripped from generated slides (no
+  "Click to add" ghosts), and export falls back to the plain PPTX base if the
+  template file is missing. The theme's `accent1` was corrected from `00BBB3`
+  (a Mac color-picker rounding) to the canonical `00BBB4`.
+- **`--formats` flag for selective export.** `deck.py export --formats
+  pdf,pptx,html` writes any subset of the three deliverables (default: all).
+  Unknown tokens and an empty selection fail fast with exit code 2.
+  `--no-editable` is kept for compatibility and simply removes `pptx` from the
+  selected set.
+
+### Changed
+- **Export workflow is now ask-first.** `SKILL.md` instructs Claude to ask the
+  user which of the three deliverables they want (PDF, editable PPTX, HTML
+  source zip) and export only those via `--formats`, instead of always
+  generating all three. "All" remains one word away, and skipped formats can be
+  re-exported later without re-rendering the deck.
 
 ## [1.3.1] — 2026-07-10
 

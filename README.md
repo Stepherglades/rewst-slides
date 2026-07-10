@@ -10,11 +10,12 @@ logo usage, and the rule that primary Bot Teal appears on every slide.
 
 What's in here
 
-PathPurposeSKILL.mdThe skill itself — workflow, brand rules, export commands.references/brand.mdPalette, type, logo, voice, and the Bot Teal rule.references/slides.mdEvery archetype, what it's for, and where teal lives.assets/deck-template.htmlStarting deck — 16 archetypes + light variants, placeholder copy.assets/deck.css, deck-stage.js, design-system/, logo/, illustrations/, fonts/The brand kit the HTML depends on.scripts/deck.pycheck (verify brand compliance) and export (write the full set).CHANGELOG.mdVersion history.
+PathPurposeSKILL.mdThe skill itself — workflow, brand rules, export commands.references/brand.mdPalette, type, logo, voice, and the Bot Teal rule.references/slides.mdEvery archetype, what it's for, and where teal lives.assets/deck-template.htmlStarting deck — 16 archetypes + light variants, placeholder copy.assets/deck.css, deck-stage.js, design-system/, logo/, illustrations/, fonts/, template/The brand kit the HTML depends on (template/ holds the Rewst .potx embedded in the editable PPTX).scripts/deck.pycheck (verify brand compliance) and export (write the full set).CHANGELOG.mdVersion history.
 
 Exports
 
-A single export always writes three deliverables:
+Export writes any subset of three deliverables (--formats pdf,pptx,html;
+the skill asks which you want):
 
 
 .pdf — one page per slide, full fidelity; the share/print format.

@@ -14,12 +14,16 @@ all resolve faithfully), then:
   render  just dump per-slide PNGs (mostly for debugging)
 
 The three shipped formats are the PDF, the editable PPTX (a design-background +
-native text boxes rebuild), and the HTML bundle. The older faithful
-(image-per-slide, non-editable) PPTX has been retired from the standard set.
+native text boxes rebuild), and the HTML bundle; `--formats pdf,pptx,html`
+selects a subset. The older faithful (image-per-slide, non-editable) PPTX has
+been retired from the standard set. The editable PPTX is built on the Rewst
+template (assets/template/rewst-slides.potx), so the delivered file carries the
+branded slide master, six layouts, and the #00BBB4 theme for hand-added slides.
 
 Usage:
   python deck.py check  deck.html
   python deck.py export deck.html --out /mnt/user-data/outputs/deck
+  python deck.py export deck.html --out out/deck --formats pdf,pptx
   python deck.py render deck.html --pngdir /tmp/slides --scale 2
 """
 import argparse, json, os, re, sys, tempfile, shutil
@@ -33,6 +37,8 @@ DESIGN_W, DESIGN_H = 1920, 1080
 SAFE_RIGHT_PX = 110               # content right-margin safe zone (matches --pad-x)
 MIN_BOX_PAD = 32                  # min internal padding inside content boxes/cards (matches --box-pad-min)
 SKILL_FONTS = os.path.join(os.path.dirname(__file__), "..", "assets", "fonts")
+SKILL_TEMPLATE = os.path.join(os.path.dirname(__file__), "..", "assets",
+                              "template", "rewst-slides.potx")
 
 
 def _font_face_css():
@@ -625,6 +631,53 @@ def _render_textless_and_extract(deck_path, scale=2):
     return pngs, boxes, shapes, has_dot, pngdir
 
 
+def _branded_presentation():
+    """Open the deck on the Rewst .potx so its slide master, six branded
+    layouts, and theme (Bot Teal #00BBB4 palette + Poppins/Montserrat) ship
+    inside the delivered PPTX. The generated slides look identical — every
+    slide carries its full-bleed design background and self-styled text runs —
+    but anyone adding a new slide in PowerPoint gets the real branded layouts,
+    and the theme palette shows in the color picker.
+
+    python-pptx refuses the .potx content type, so the template is copied to a
+    temp .pptx with the main content type patched from
+    presentationml.template to presentationml.presentation. The .potx in
+    assets/template/ stays the editable source of truth.
+
+    Returns (Presentation, base_layout, is_branded). Falls back to the plain
+    python-pptx default (blank layout 6) if the template is missing or
+    unreadable, so export never breaks over branding."""
+    from pptx import Presentation
+    try:
+        if os.path.isfile(SKILL_TEMPLATE):
+            import zipfile
+            fd, tmp = tempfile.mkstemp(suffix=".pptx")
+            os.close(fd)
+            try:
+                with zipfile.ZipFile(SKILL_TEMPLATE) as zin, \
+                     zipfile.ZipFile(tmp, "w", zipfile.ZIP_DEFLATED) as zout:
+                    for item in zin.infolist():
+                        data = zin.read(item.filename)
+                        if item.filename == "[Content_Types].xml":
+                            data = data.replace(
+                                b"presentationml.template.main+xml",
+                                b"presentationml.presentation.main+xml")
+                        zout.writestr(item, data)
+                prs = Presentation(tmp)
+                # Base generated slides on the layout with the fewest
+                # placeholders; the clones are stripped per slide anyway.
+                base = min(prs.slide_layouts,
+                           key=lambda l: len(l.placeholders))
+                return prs, base, True
+            finally:
+                os.unlink(tmp)
+    except Exception as e:
+        print(f"note: branded template unavailable ({e}); "
+              f"using plain PPTX base", file=sys.stderr)
+    prs = Presentation()
+    return prs, prs.slide_layouts[6], False
+
+
 def export_editable(deck_path, out_base, scale=2):
     """Hybrid editable PPTX: full-bleed design background + native text boxes."""
     from PIL import Image  # noqa: F401 (ensures Pillow present)
@@ -638,11 +691,10 @@ def export_editable(deck_path, out_base, scale=2):
     try:
         if not pngs:
             print("No slides rendered.", file=sys.stderr); return False
-        prs = Presentation()
+        prs, blank, branded = _branded_presentation()
         prs.slide_width, prs.slide_height = Inches(13.333), Inches(7.5)
         EMU_PER_PX = prs.slide_width / DESIGN_W            # 1920px -> 13.333in
         PT_PER_PX = 0.5                                     # 1920px == 960pt
-        blank = prs.slide_layouts[6]
         notes = _speaker_notes(deck_path)
         align_map = {"center": PP_ALIGN.CENTER, "right": PP_ALIGN.RIGHT,
                      "justify": PP_ALIGN.JUSTIFY, "left": PP_ALIGN.LEFT,
@@ -656,6 +708,13 @@ def export_editable(deck_path, out_base, scale=2):
 
         for i, png in enumerate(pngs):
             s = prs.slides.add_slide(blank)
+            if branded:
+                # The branded layouts all carry placeholders; the generated
+                # slides don't use them (the design is the baked background +
+                # explicit text boxes), so drop the empty clones — otherwise
+                # PowerPoint shows "Click to add ..." ghosts in edit view.
+                for ph in list(s.placeholders):
+                    ph._element.getparent().remove(ph._element)
             s.shapes.add_picture(png, 0, 0, width=prs.slide_width, height=prs.slide_height)
             for bx in by_slide.get(i, []):
                 left = Emu(int(bx["x"] * EMU_PER_PX)); top = Emu(int(bx["y"] * EMU_PER_PX))
@@ -823,21 +882,38 @@ def main():
     e = sub.add_parser("export", help="write the standard set: <out>.pdf, "
                                       "<out>-editable.pptx, and <out>-html.zip")
     e.add_argument("deck"); e.add_argument("--out", required=True); e.add_argument("--scale", type=int, default=2)
+    e.add_argument("--formats", default="pdf,pptx,html",
+                   help="comma-separated subset of pdf,pptx,html to write "
+                        "(default: all three). 'pptx' is the editable PPTX.")
     e.add_argument("--editable", action="store_true",
                    help="(default behavior) also write the editable PPTX — kept for compatibility")
     e.add_argument("--no-editable", action="store_true",
-                   help="skip the editable PPTX (not recommended; editable is part of the standard deliverable)")
+                   help="skip the editable PPTX (kept for compatibility; same as "
+                        "omitting pptx from --formats)")
     r = sub.add_parser("render", help="dump per-slide PNGs")
     r.add_argument("deck"); r.add_argument("--pngdir", required=True); r.add_argument("--scale", type=int, default=2)
     a = ap.parse_args()
     if a.cmd == "check":
         sys.exit(0 if check(a.deck, a.scale) else 1)
     elif a.cmd == "export":
-        ok = export(a.deck, a.out, a.scale)          # <out>.pdf
-        if ok and not a.no_editable:
+        fmts = {f.strip().lower() for f in a.formats.split(",") if f.strip()}
+        bad = fmts - {"pdf", "pptx", "html"}
+        if bad:
+            print(f"unknown format(s): {', '.join(sorted(bad))} "
+                  f"(choose from pdf, pptx, html)", file=sys.stderr)
+            sys.exit(2)
+        if a.no_editable:
+            fmts.discard("pptx")
+        if not fmts:
+            print("nothing to export: no formats selected", file=sys.stderr)
+            sys.exit(2)
+        ok = True
+        if "pdf" in fmts:
+            ok = export(a.deck, a.out, a.scale)          # <out>.pdf
+        if ok and "pptx" in fmts:
             ok = export_editable(a.deck, a.out, a.scale) and ok   # <out>-editable.pptx
-        if ok:
-            export_html_bundle(a.deck, a.out)          # <out>-html.zip (editable source)
+        if ok and "html" in fmts:
+            export_html_bundle(a.deck, a.out)            # <out>-html.zip (editable source)
         sys.exit(0 if ok else 1)
     elif a.cmd == "render":
         render(a.deck, a.pngdir, a.scale); print("rendered to", a.pngdir)

@@ -29,8 +29,8 @@ from it.
 - `references/brand.md` — palette, type, logo, voice, the Bot Teal rule.
 - `references/slides.md` — what each archetype is for and where teal lives.
 - `scripts/deck.py` — `check` (verify Bot Teal, right margin, box padding, and
-  footers per slide) and `export` (one command writes the full set: `.pdf`,
-  `-editable.pptx`, and `-html.zip`).
+  footers per slide) and `export` (writes `.pdf`, `-editable.pptx`, and/or
+  `-html.zip`; `--formats` selects which — ask the user, see step 6).
 
 ## Workflow
 
@@ -110,12 +110,12 @@ This renders every slide in a real browser and verifies these rules:
 A `FAIL` is a real defect — fix it and re-run until everything passes. Don't
 export a deck that fails.
 
-### 6. Export — one command produces the whole set
-```bash
-python <skill>/scripts/deck.py export /mnt/user-data/outputs/<deckname>/<deckname>.html \
-    --out /mnt/user-data/outputs/<deckname>/<deckname>
-```
-A single `export` (no flags needed) always writes **three** deliverables:
+### 6. Export — ask which formats, then run one command
+
+**Before exporting, ask the user which deliverables they want** (unless they've
+already said — in this conversation or as a standing preference). Offer the
+three formats with a one-line description of each, and translate the answer
+into `--formats`:
 
 1. `<deckname>.pdf` — one page per slide, full fidelity. The share/print format.
 2. `<deckname>-editable.pptx` — **editable** PowerPoint: the design (teal fields,
@@ -127,9 +127,25 @@ A single `export` (no flags needed) always writes **three** deliverables:
 3. `<deckname>-html.zip` — the **editable source**: the HTML plus its asset kit,
    zipped. Unzip and open the HTML in a browser to view/edit/re-render.
 
-This is the standard deliverable set — generate all three every time. (`--no-editable`
-exists to skip the editable PPTX, but don't use it unless the user explicitly
-asks; editability is part of the standard output.)
+```bash
+python <skill>/scripts/deck.py export /mnt/user-data/outputs/<deckname>/<deckname>.html \
+    --out /mnt/user-data/outputs/<deckname>/<deckname> --formats <their choice>
+```
+
+`--formats` takes any comma-separated subset of `pdf,pptx,html` (`pptx` is the
+editable PPTX). Omitting the flag writes all three — use that when the user
+says "all" or "everything". If they ask for "PowerPoint" or "slides" with no
+other signal, that's `pptx`; "something to present/print/share" is `pdf`; "the
+source" or "to keep editing later" is `html`. (`--no-editable` still works and
+just removes `pptx` from the set.)
+
+The editable PPTX is built on the Rewst PowerPoint template
+(`assets/template/rewst-slides.potx`), so the delivered file carries the branded
+slide master, six branded layouts (title, content_dark, section divider, big
+statement, quote, content_light), and the #00BBB4 theme palette. Generated
+slides look exactly as before; the layouts exist so anyone adding a **new**
+slide by hand in PowerPoint gets on-brand color, type, and placement instead of
+Office defaults.
 
 Tradeoffs to mention when handing over the **editable** PPTX:
 - The editor needs **Poppins and Montserrat installed** locally, or PowerPoint
@@ -150,11 +166,11 @@ Tradeoffs to mention when handing over the **editable** PPTX:
   auto-numbers (their CSS counter is resolved into a real text box on export).
 
 ### 7. Present the results
-Share all three: the **PDF**, the **editable `-editable.pptx`**, and the
-**`-html.zip`** (editable source). Briefly note which is which — the PDF is
+Share the format(s) the user chose, briefly noting which is which — the PDF is
 pixel-perfect for presenting or printing as-is; the editable PPTX is for
-tweaking copy in PowerPoint; the HTML zip is the master you can re-render.
-Don't make the team ask for the editable formats — they're part of every delivery.
+tweaking copy in PowerPoint; the HTML zip is the master you can re-render. If
+they took a subset, mention the other formats are one ask away — no need to
+re-render the deck, only re-export.
 
 ## Fidelity notes
 
