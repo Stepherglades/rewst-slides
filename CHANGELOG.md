@@ -4,6 +4,8 @@ All notable changes to the `rewst-slides` skill are recorded here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); this project
 uses simple `vMAJOR.MINOR` release tags.
 
+## Unreleased
+
 ## [1.4] — 2026-08-04
 
 ### Added
