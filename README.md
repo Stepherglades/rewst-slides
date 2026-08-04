@@ -40,7 +40,7 @@ in this repo to a skill directory directly.
 Versioning
 
 Released as vMAJOR.MINOR tags. See CHANGELOG.md for what
-changed in each version. The current release is v1.3.
+changed in each version. The current release is v1.4.
 
 
 Private repo — Rewst internal tooling.
