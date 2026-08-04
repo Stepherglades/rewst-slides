@@ -1,0 +1,287 @@
+name: Package & release rewst-slides
+
+# Fires when you create a tag like v1.4 in the GitHub web UI.
+# Also runnable manually (Actions tab -> Run workflow) as a dry run that
+# verifies the repo and builds the zip WITHOUT publishing a release.
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  # Folder name inside the zip. Must match how Claude mounts the skill.
+  SKILL_DIR: rewst-slides
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      # ------------------------------------------------------------------
+      # 1. Work out which version we're building
+      # ------------------------------------------------------------------
+      - name: Resolve version
+        id: version
+        run: |
+          set -euo pipefail
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            TAG="${GITHUB_REF_NAME}"
+            echo "dry_run=false" >> "$GITHUB_OUTPUT"
+          else
+            TAG="dryrun-$(date +%Y%m%d-%H%M%S)"
+            echo "dry_run=true"  >> "$GITHUB_OUTPUT"
+          fi
+          echo "tag=${TAG}"                        >> "$GITHUB_OUTPUT"
+          echo "number=${TAG#v}"                   >> "$GITHUB_OUTPUT"
+          echo "Building: ${TAG}"
+
+      # ------------------------------------------------------------------
+      # 2. Verify the package is complete BEFORE we build anything.
+      #    This is the step that makes a broken artifact impossible.
+      # ------------------------------------------------------------------
+      - name: Verify skill structure
+        run: |
+          set -uo pipefail
+          FAIL=0
+          fail() { echo "::error::$1"; FAIL=1; }
+          ok()   { echo "  ok  $1"; }
+
+          echo "--- required files ---"
+          REQUIRED="
+            SKILL.md
+            README.md
+            CHANGELOG.md
+            scripts/deck.py
+            assets/deck.css
+            assets/deck-stage.js
+            assets/deck-template.html
+            assets/design-system/colors_and_type.css
+            assets/template/rewst-slides.potx
+            assets/fonts/Montserrat-Regular.ttf
+            assets/fonts/Montserrat-Medium.ttf
+            assets/fonts/Montserrat-SemiBold.ttf
+            assets/fonts/Montserrat-Bold.ttf
+            assets/fonts/Montserrat-Black.ttf
+            assets/logo/rewst-logo.svg
+            assets/logo/rewst-logo.png
+            assets/logo/rewst-logo-ondark.png
+            assets/logo/stewart.svg
+            assets/logo/stewart.png
+            assets/logo/stewart-outline-white.png
+            references/brand.md
+            references/slides.md
+          "
+          for f in $REQUIRED; do
+            if [ -s "$f" ]; then ok "$f"; else fail "missing or empty: $f"; fi
+          done
+
+          echo "--- directory minimums ---"
+          check_count() {
+            local dir="$1" min="$2" pattern="$3"
+            local n
+            n=$(find "$dir" -maxdepth 1 -type f -name "$pattern" 2>/dev/null | wc -l)
+            if [ "$n" -ge "$min" ]; then
+              ok "$dir has $n $pattern (min $min)"
+            else
+              fail "$dir has only $n $pattern, expected at least $min"
+            fi
+          }
+          check_count assets/illustrations 16 '*.svg'
+          check_count assets/logo           6 '*'
+          check_count references            2 '*.md'
+
+          echo "--- brand colour integrity in .potx ---"
+          # Catches the accent1 = 00BBB3 rounding bug from the Mac colour picker.
+          mkdir -p /tmp/potx && unzip -o -q assets/template/rewst-slides.potx -d /tmp/potx
+          THEME=/tmp/potx/ppt/theme/theme1.xml
+          if [ ! -f "$THEME" ]; then
+            fail ".potx has no ppt/theme/theme1.xml — template is malformed"
+          else
+            if grep -q '00BBB3' "$THEME"; then
+              fail "theme contains 00BBB3 — Bot Teal must be the canonical 00BBB4"
+            else
+              ok "no 00BBB3 in theme"
+            fi
+            if grep -q '00BBB4' "$THEME"; then
+              ok "canonical Bot Teal 00BBB4 present"
+            else
+              fail "theme is missing 00BBB4 entirely"
+            fi
+          fi
+          LAYOUTS=$(find /tmp/potx/ppt/slideLayouts -maxdepth 1 -name 'slideLayout*.xml' | wc -l)
+          if [ "$LAYOUTS" -ge 6 ]; then
+            ok ".potx has $LAYOUTS slide layouts"
+          else
+            fail ".potx has only $LAYOUTS slide layouts, expected 6"
+          fi
+
+          echo "--- python syntax ---"
+          if python3 -m py_compile scripts/deck.py 2>/dev/null; then
+            ok "scripts/deck.py compiles"
+          else
+            fail "scripts/deck.py has a syntax error"
+          fi
+
+          echo "--- SKILL.md frontmatter ---"
+          if head -1 SKILL.md | grep -q '^---$'; then
+            ok "frontmatter opens on line 1"
+          else
+            fail "SKILL.md must start with '---' on line 1"
+          fi
+          if grep -q '^name: rewst-slides' SKILL.md; then
+            ok "name: rewst-slides"
+          else
+            fail "SKILL.md frontmatter is missing 'name: rewst-slides'"
+          fi
+
+          if [ "$FAIL" -ne 0 ]; then
+            echo "::error::Verification failed — no release will be produced."
+            exit 1
+          fi
+          echo "All checks passed."
+
+      # ------------------------------------------------------------------
+      # 3. Version-stamp discipline: the tag must be recorded in CHANGELOG.
+      #    This is what stops GitHub, the release tag, and the Settings zip
+      #    from silently drifting apart.
+      # ------------------------------------------------------------------
+      - name: Check version stamps
+        if: steps.version.outputs.dry_run == 'false'
+        run: |
+          set -uo pipefail
+          NUM="${{ steps.version.outputs.number }}"
+          if grep -qE "^## \[${NUM}\]" CHANGELOG.md; then
+            echo "  ok  CHANGELOG.md has a [${NUM}] section"
+          else
+            echo "::error::CHANGELOG.md has no '## [${NUM}]' heading. Move [Unreleased] to [${NUM}] and commit before tagging."
+            exit 1
+          fi
+          if grep -q "v${NUM}" README.md; then
+            echo "  ok  README.md mentions v${NUM}"
+          else
+            echo "::warning::README.md does not mention v${NUM} — the 'current release is' line looks stale."
+          fi
+
+      # ------------------------------------------------------------------
+      # 4. Build the zip from the checked-out repo. Complete by construction.
+      # ------------------------------------------------------------------
+      - name: Build package
+        id: build
+        run: |
+          set -euo pipefail
+          TAG="${{ steps.version.outputs.tag }}"
+          NAME="${SKILL_DIR}-${TAG}.zip"
+          STAGE="$RUNNER_TEMP/stage/${SKILL_DIR}"
+          mkdir -p "$STAGE"
+
+          # Copy everything except repo plumbing.
+          rsync -a ./ "$STAGE/" \
+            --exclude '.git' \
+            --exclude '.github' \
+            --exclude '.gitignore' \
+            --exclude '.gitattributes' \
+            --exclude '.DS_Store' \
+            --exclude '__pycache__' \
+            --exclude '*.pyc'
+
+          cd "$RUNNER_TEMP/stage"
+          zip -r -q "$GITHUB_WORKSPACE/$NAME" "$SKILL_DIR"
+          cd "$GITHUB_WORKSPACE"
+
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "Built $NAME ($(du -h "$NAME" | cut -f1))"
+
+      # ------------------------------------------------------------------
+      # 5. Prove the zip is good by inspecting the zip itself, not the repo.
+      # ------------------------------------------------------------------
+      - name: Verify built zip
+        run: |
+          set -euo pipefail
+          NAME="${{ steps.build.outputs.name }}"
+          rm -rf /tmp/unz && mkdir -p /tmp/unz
+          unzip -q "$NAME" -d /tmp/unz
+          ROOT="/tmp/unz/${SKILL_DIR}"
+
+          [ -f "$ROOT/SKILL.md" ] || { echo "::error::zip root is wrong — no ${SKILL_DIR}/SKILL.md"; exit 1; }
+
+          COUNT=$(find "$ROOT" -type f | wc -l)
+          echo "Files in package: $COUNT"
+          if [ "$COUNT" -lt 35 ]; then
+            echo "::error::only $COUNT files in the package — asset subtrees are missing"
+            exit 1
+          fi
+
+          for d in assets/illustrations assets/logo assets/fonts assets/template \
+                   assets/design-system references scripts; do
+            n=$(find "$ROOT/$d" -type f 2>/dev/null | wc -l)
+            [ "$n" -gt 0 ] || { echo "::error::empty or missing in zip: $d"; exit 1; }
+            printf "  ok  %-28s %s files\n" "$d" "$n"
+          done
+
+          {
+            echo "### Package: \`$NAME\`"
+            echo ""
+            echo "Total files: **$COUNT**"
+            echo ""
+            echo '```'
+            find "$ROOT" -type f | sed "s|/tmp/unz/||" | sort
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # ------------------------------------------------------------------
+      # 6a. Dry run: keep the zip as a build artifact, publish nothing.
+      # ------------------------------------------------------------------
+      - name: Upload dry-run artifact
+        if: steps.version.outputs.dry_run == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.build.outputs.name }}
+          path: ${{ steps.build.outputs.name }}
+          retention-days: 14
+
+      # ------------------------------------------------------------------
+      # 6b. Real tag: create the release and attach the zip.
+      # ------------------------------------------------------------------
+      - name: Publish release
+        if: steps.version.outputs.dry_run == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG="${{ steps.version.outputs.tag }}"
+          NUM="${{ steps.version.outputs.number }}"
+          NAME="${{ steps.build.outputs.name }}"
+
+          # Pull this version's notes out of the CHANGELOG.
+          awk -v v="## [${NUM}]" '
+            index($0, v) == 1 { grab = 1; next }
+            grab && /^## \[/   { exit }
+            grab               { print }
+          ' CHANGELOG.md > notes.md
+
+          if [ ! -s notes.md ]; then
+            echo "Release ${TAG} of the rewst-slides Claude skill." > notes.md
+          fi
+          {
+            echo ""
+            echo "---"
+            echo "Built automatically from \`${GITHUB_SHA}\`. Download \`${NAME}\` below and upload it in Claude → Settings → Capabilities → Skills."
+          } >> notes.md
+
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release exists — updating."
+            gh release edit "$TAG" --notes-file notes.md --title "$TAG"
+            gh release upload "$TAG" "$NAME" --clobber
+          else
+            gh release create "$TAG" "$NAME" --title "$TAG" --notes-file notes.md
+          fi
+
+          echo "Published $TAG with $NAME"
