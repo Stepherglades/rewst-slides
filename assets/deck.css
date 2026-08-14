@@ -4,19 +4,99 @@
 
 /* Themed palette (set by tweaks-app.jsx, defaults baked in) */
 :root {
-  --t-bg-deep:      #082C2C;
-  --t-bg-section:   #005655;
+  --t-bg-deep:      var(--c-teal-deep);
+  --t-bg-section:   var(--c-teal-dark);
   --t-bg-card:      #0E3D3D;
-  --t-bg-light:     #F5F1EA;
-  --t-headline:     #00BBB4;
-  --t-headline-soft:#A5DFDF;
+  --t-bg-light:     var(--c-white);
+  --t-headline:     var(--c-teal);
+  --t-headline-soft:var(--c-teal-pale);
   --t-body-on-dark: #D8EDED;
-  --t-accent:       #F9A100;
-  --t-accent-soft:  #FDD999;
-  --t-accent-deep:  #432800;
-  --t-coral:        #F15B5B;  /* Alert Coral — canonical */
+  --t-accent:       var(--c-amber);
+  --t-accent-deep:  var(--c-amber-deep);
+  --t-coral:        var(--c-coral);  /* Alert Coral — canonical */
   --t-divider:      rgba(165,223,223,0.18);
-  --brand-teal:     #00BBB4;  /* primary Bot Teal — fixed; NOT remapped by theme-light */
+
+  /* Nested panel pair — the stat card, quote box, CTA card, "after" column,
+     feature tier and good/warn pills. A panel is a bright fill with dark type in
+     the dark deck, and the reverse on a bright ground; a theme only has to set
+     these two, never the rules that consume them. */
+  --t-panel:        var(--t-headline);
+  --t-on-panel:     var(--t-bg-deep);
+
+  /* CARD INTERIOR TYPE SET — the partner --t-bg-card never had.
+     --t-panel travels with --t-on-panel, but --t-bg-card was a bare fill: type
+     inside a card resolved the SLIDE's tokens, which are tuned for the ground.
+     On the dark deck that's invisible (card and ground are both dark teal), but
+     the moment a theme fills a card light it paints the ground's pale type onto
+     a pale fill. Four archetypes consume --t-bg-card and all four were affected:
+     s-process, s-team, s-pricing, and s-compare's "before" column.
+
+     Defaults ALIAS the ground tokens rather than restating the dark deck's
+     literal values, so unset = provably no change and the two can't drift apart.
+     Don't hardcode the dark values here.
+
+     A theme that fills a card light must set these; --t-bg-card and this set
+     travel together, the same way --t-panel travels with --t-on-panel. */
+  --t-on-card-label:   var(--t-headline);       /* step titles, tier names */
+  --t-on-card-strong:  var(--t-headline-soft);  /* person names, prices, headings */
+  --t-on-card-body:    var(--t-body-on-dark);   /* descriptions, roles, list items */
+  --t-on-card-mark:    var(--t-mark);           /* check glyphs and small marks */
+  --t-on-card-divider: var(--t-divider);        /* hairline rules inside a card */
+
+  /* Softer sibling of --t-accent, for an accent that would be too loud at full
+     strength (the quote lead-in). Defaults to --t-accent, so unset = no change. */
+  --t-accent-soft:  var(--t-accent);
+  /* Small brand marks that must stay primary Bot Teal even when the surrounding
+     family darkens (the completed timeline dot). */
+  --t-mark:         var(--t-headline);
+  /* The close slide's hero title, so it can differ from the eyebrow. */
+  --t-hero-title:   var(--t-headline);
+  /* Type on an Alert Coral fill, and on a Trigger Amber fill. */
+  --t-on-coral:     #FFFFFF;
+  --t-on-accent:    var(--t-bg-deep);
+  /* Repeating column item (the s-bullets points). A theme either leaves these
+     alone and gets the dark deck's bare column with an amber top rule, or sets
+     them and gets an inset box instead. Defaults reproduce the dark deck exactly,
+     so unset = no change. If a theme fills the box, every side of --t-item-pad
+     must be >= 32px (--box-pad-min) or `deck.py check` will flag it. */
+  --t-item-fill:    transparent;
+  --t-item-radius:  0;
+  --t-item-pad:     32px 32px 32px 0;
+  --t-item-rule:    3px solid var(--t-accent);
+  /* Card elevation. Cards need a shadow on a light ground and none on a dark one. */
+  --t-card-shadow:  none;
+  /* Hairline tints for hover rows and muted pills — light over a dark ground. */
+  --t-tint:         rgba(255,255,255,0.02);
+  --t-tint-strong:  rgba(255,255,255,0.08);
+  --brand-teal:     #00BBB4;  /* primary Bot Teal — fixed; NOT remapped by theme-vibrant */
+
+  /* GLYPH SHAPES — shape only, colour comes from a token.
+     These were previously five data URIs with the stroke colour baked in, which
+     made them the one part of the deck a theme could not re-band. That caused a
+     real defect: the vibrant featured pricing tier darkened to #082C2C while its
+     check glyph stayed hardcoded #082C2C, so the ticks vanished into the fill.
+     The compare ✕ was also off-palette (#FF4C54 rather than canonical coral).
+
+     They are applied as a MASK, not a background-image, so the fill is a normal
+     token-driven `background`. A mask keys off the source's ALPHA, so the stroke
+     colour inside the SVG below is irrelevant — only the shape matters.
+
+     Use the LONGHAND mask properties when consuming these. The `mask:` shorthand
+     silently renders nothing in headless Chromium, which is what every PDF and
+     PPTX export goes through — same trap as .bleed-stewart below. */
+  --glyph-check:   url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'><polyline points='3,9 8,14 15,4' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  --glyph-check-lg:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'><polyline points='4,12 9,17 18,6' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  --glyph-cross:   url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'><line x1='5' y1='5' x2='17' y2='17' stroke='%23000' stroke-width='3' stroke-linecap='round'/><line x1='17' y1='5' x2='5' y2='17' stroke='%23000' stroke-width='3' stroke-linecap='round'/></svg>");
+  --glyph-chevron: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><polyline points='6,3 13,10 6,17' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+
+  /* Logo lockups. RULE: anything darker than a primary takes the white wordmark.
+     In practice that means only the two bright primary grounds (#00BBB4 teal and
+     #F9A100 amber) use the dark wordmark — every dark and deep stop, and Ops
+     Indigo, take the white one. --logo is set per ground family so the lockup
+     follows the family automatically; never set it per slide in markup. */
+  --logo-dark:      url("logo/rewst-logo.png");        /* dark wordmark → bright grounds */
+  --logo-light:     url("logo/rewst-logo-ondark.png"); /* white wordmark → dark grounds */
+  --logo:           var(--logo-light);
 
   --font-heading:   "Poppins", "Goldplay", system-ui, sans-serif;
   --font-body:      "Montserrat", system-ui, sans-serif;
@@ -38,25 +118,71 @@
   --type-h4:        32px;
   --type-body:      28px;
   --type-body-sm:   24px;
-  --type-eyebrow:   18px;
-  --type-caption:   16px;
   --type-stat:      220px;
+  /* No --type-eyebrow / --type-caption: `.eyebrow` and `.caption` set their own
+     24px directly. The removed tokens claimed 18px and 16px, which matched
+     nothing on the canvas and misreported both roles as small text. */
 }
 
 /* =========================================================================
-   LIGHT THEME MODIFIER
-   Add class="theme-light" to any <section> to flip it to a cream background.
-   Works by remapping the shared --t-* tokens that every slide rule reads,
-   plus a few targeted card/contrast fixes below.
+   VIBRANT THEME
+   Add class="theme-vibrant" to <deck-stage> to re-band the whole deck. Apply it
+   at the deck level, not per slide — mixing themes by hand breaks the banding.
+
+   This is NOT "the dark deck with light backgrounds," and it is not built from
+   pale tints either. Grounds are SATURATED PRIMARIES — the four family cores —
+   with a Bot Teal Dark working surface tying them together. Light and pale stops
+   are demoted to type and small fills; they never carry a slide.
+
+   ---- The token contract (why so few overrides are needed) ----------------
+   The base stylesheet pairs two tokens as opposites:
+
+       --t-bg-deep    the slide ground
+       --t-headline   the accent, AND the fill for nested panels
+                      (stat card, compare "after" column, feature pricing tier,
+                       table pills, image frame, timeline dots)
+
+   and it paints text on a --t-headline panel as `color: var(--t-bg-deep)`.
+   So the pair simply has to be a legible inversion — it does NOT matter which
+   one is the light half. That makes both directions work off the same base CSS:
+
+       dark ground   (surface, indigo)  --t-bg-deep dark   + --t-headline light
+       bright ground (teal/amber/coral) --t-bg-deep bright + --t-headline dark
+
+   The previous version of this theme broke that pair (a pale --t-bg-deep with a
+   dark --t-headline), which is why it needed a per-archetype override for nearly
+   every nested panel. Keep the pair inverted and the base rules just work.
+
+   ---- READ THIS BEFORE TRUSTING THE PARAGRAPH ABOVE ----------------------
+   `--t-panel: var(--t-headline)` in :root does NOT mean "whatever --t-headline
+   is on this slide." CSS substitutes var() inside a custom property at the
+   element where the property is DECLARED, and the resulting literal is what
+   inherits. So --t-panel computes once, on :root, to :root's --t-headline —
+   primary Bot Teal — and every slide inherits that literal. Redefining
+   --t-headline on a slide does not reach back and change it.
+
+   The dark deck never noticed, because there :root's teal IS the wanted panel
+   fill. In vibrant it means any slide with a nested panel on a non-teal ground
+   gets a Bot Teal box unless it names --t-panel itself. That produced two real
+   defects: the s-pricing featured tier (fixed in 1.5) and the s-compare "after"
+   column, which rendered teal beside an amber-dark "before" column (fixed 1.6).
+
+   RULE: if an archetype consumes --t-panel / --t-on-panel and its ground is not
+   teal, it MUST name both. `test_theme.py` T9 enforces this — don't rely on the
+   default resolving per-slide, because it doesn't.
+
+   Per-band exceptions are in THEME-VIBRANT BANDS near the end of this file;
+   the four primary grounds are in SECONDARY INSET FAMILIES below that.
    ========================================================================= */
-.theme-light {
-  --t-bg-deep:      #F5F1EA; /* cream slide background */
-  --t-bg-section:   #EBE3D6; /* deeper cream */
-  --t-bg-card:      #FFFFFF; /* white cards */
-  --t-headline:     #005655; /* mid-dark teal — strong on cream */
-  --t-headline-soft:#0E3D3D; /* deep teal — large display text */
-  --t-body-on-dark: #3D4D4B; /* dark slate-teal body */
-  --t-divider:      rgba(8,44,44,0.14);
+.theme-vibrant {
+  --t-bg-deep:      var(--c-teal-dark);  /* #005655 — the working surface */
+  --t-bg-section:   var(--c-indigo);     /* Ops Indigo — testimonial band */
+  --t-bg-card:      var(--c-white);
+  --t-bg-light:     var(--c-white);
+  --t-headline:     var(--brand-teal);   /* #00BBB4 — accent + bright panel fill */
+  --t-headline-soft:var(--c-teal-pale);  /* #A5DFDF — display text */
+  --t-body-on-dark: #D8EDED;
+  --t-divider:      rgba(165,223,223,0.18);
 }
 
 html, body {
@@ -199,8 +325,19 @@ deck-stage section {
   opacity: 0.55;
   z-index: 5;
 }
-.pageno.on-light { color: var(--t-bg-deep); }
-.pageno.on-dark  { color: var(--t-headline-soft); }
+/* LOCKUP + NUMERAL ARE CSS-DRIVEN, NOT MARKUP-DRIVEN.
+   A deck author can't pick the right logo variant or .pageno modifier for two
+   themes at once, so neither is read from the markup. The authored <img> is
+   hidden with visibility (not display, so it still reserves its 60px box) and the
+   correct wordmark is painted behind it from --logo. The numeral takes the slide's
+   own tokens. Authored on-light / on-dark modifiers are ignored either way. */
+.brand-mark img { visibility: hidden; }
+.brand-mark { background: var(--logo) left center / auto 60px no-repeat; }
+.pageno.on-light,
+.pageno.on-dark { color: var(--t-headline-soft); }
+/* s-title is panel-shaped: ground is the panel fill, so type is the on-panel colour. */
+.s-title .pageno.on-light,
+.s-title .pageno.on-dark { color: var(--t-on-panel); }
 
 body.hide-pageno .pageno { display: none; }
 
@@ -247,8 +384,14 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
    Slide 01 — Title (deep teal + bleed Stewart right)
    ========================================================================= */
 .s-title {
-  background: var(--t-headline);
+  background: var(--t-panel);
 }
+/* Each band names its own Stewart colour; .bleed-stewart just consumes it, so a
+   theme retints the silhouette with one token instead of a selector per band. */
+.s-title  { --t-stewart: var(--t-on-panel); --logo: var(--logo-dark); }
+.s-section { --t-stewart: var(--c-teal); }
+.bleed-stewart { --bleed-color: var(--t-stewart); }
+
 /* The bleed Stewart occupies the lower-right, where the page number would sit.
    Title slides conventionally don't show a number anyway — suppress it here. */
 /* page number shows on every slide, including the title (footer rule) */
@@ -265,7 +408,7 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   height: 1320px;
   opacity: 1;
 }
-.s-title .bleed-stewart { --bleed-color: var(--t-bg-deep); }   /* teal on teal */
+
 .s-title .content-area {
   padding: 200px 110px 0;
   display: flex;
@@ -274,27 +417,22 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   gap: 56px;
   max-width: 1180px;
 }
-.s-title .eyebrow { color: var(--t-bg-deep); }
-.s-title .h-title { color: var(--t-bg-deep); max-width: 1000px; }
+.s-title .eyebrow { color: var(--t-on-panel); }
+.s-title .h-title { color: var(--t-on-panel); max-width: 1000px; }
 .s-title .meta {
   display: flex;
   flex-direction: column;
   gap: 6px;
   margin-top: 8px;
 }
-.s-title .meta .body { color: var(--t-bg-deep); }
-.s-title .meta .caption { color: var(--t-bg-deep); opacity: 0.7; }
+.s-title .meta .body { color: var(--t-on-panel); }
+.s-title .meta .caption { color: var(--t-on-panel); opacity: 0.7; }
 
-/* Deep variant — Bot Teal Deep field with a primary Bot Teal Stewart outline.
-   Add class="s-title on-deep"; switch the brand-mark img to rewst-logo-ondark.png
-   and the .pageno to class "on-dark". The default (no modifier) is the lighter
-   Bot Teal field with a Bot Teal Deep outline. Both are tone-on-tone teal. */
+/* The Bot Teal Deep field IS the default now — the dark deck carries no light
+   grounds. class="on-deep" is retained as a harmless no-op so existing decks
+   don't break. The old bright-teal title field lives on only in theme-vibrant,
+   where it becomes the deep-teal hero band. */
 .s-title.on-deep { background: var(--t-bg-deep); }
-.s-title.on-deep .bleed-stewart { --bleed-color: var(--t-headline); }
-.s-title.on-deep .eyebrow { color: var(--t-headline); }
-.s-title.on-deep .h-title { color: #fff; }
-.s-title.on-deep .meta .body { color: var(--t-headline-soft); opacity: 1; }
-.s-title.on-deep .meta .caption { color: var(--t-headline-soft); opacity: 0.7; }
 
 /* =========================================================================
    Slide 02 — Agenda
@@ -303,13 +441,33 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
 .s-agenda .content-area {
   display: grid;
   grid-template-columns: 1fr 1.6fr;
+  /* The single row is pinned to the content area's own height. Without this the
+     row is content-sized: when the lead column (headline + body + illustration)
+     ran taller than the area, the row grew, and the list — height:100% OF THAT
+     ROW — grew with it, pushing its last entry down over the page number and
+     the illustration over the logo. Pinning the row makes "100%" mean the
+     content area again, and minmax(0,…) lets the columns shrink inside it. */
+  grid-template-rows: minmax(0, 100%);
   gap: 100px;
-  align-items: start;
+  align-items: stretch;
+}
+/* The lead is a flex column so its illustration can give ground: the text keeps
+   its natural height and the art absorbs whatever the column can't fit, instead
+   of forcing the column taller than the slide. */
+.s-agenda .lead {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 .s-agenda .lead .eyebrow { margin-bottom: 28px; }
 .s-agenda .lead .h-2 { color: var(--t-headline); }
-.s-agenda.theme-light .lead .h-2 { color: var(--brand-teal); } /* light variant: primary #00BBB4 */
+
 .s-agenda .lead .body { color: var(--t-body-on-dark); margin-top: 28px; max-width: 460px; }
+/* The list spreads its rows over the full column height instead of stacking at
+   the top and leaving the bottom of the slide empty. The rules then read as a
+   full-height ledger, and it self-adjusts as rows are added or dropped.
+   Sized for 3–6 rows; below three the spacing starts to look thin, so use a
+   different archetype for a two-item agenda. */
 .s-agenda ol.list {
   list-style: none;
   margin: 0;
@@ -317,7 +475,10 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   counter-reset: idx;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   gap: 0;
+  height: 100%;
+  box-sizing: border-box;
 }
 .s-agenda ol.list li {
   counter-increment: idx;
@@ -350,18 +511,25 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--t-body-on-dark);
-  opacity: 0.6;
+  /* 0.6 put the timing at 2.92:1 on the vibrant amber-dark ground — just under
+     the 3:1 a 24px label needs. 0.7 clears it at 3.38:1 and still reads as the
+     quietest thing in the row. */
+  opacity: 0.7;
 }
 
 /* =========================================================================
-   Section dividers (warm orange + bleed Stewart in dark warm)
-   The dividers introduce color variety — the rest of the deck stays teal.
+   Section dividers — a Bot Teal field, tone-on-tone with the title slide.
+   "Dark" here means no pale or light teal grounds and no muddy amber/coral
+   shades — primary Bot Teal is welcome as a ground. theme-vibrant overrides this
+   to the bright var(--c-amber) marketing divider instead.
    ========================================================================= */
 .s-section {
-  background: var(--c-orange);
-  color: var(--c-brown-dark);
+  background: var(--t-bg-section);       /* Bot Teal Dark var(--c-teal-dark) — a step down
+                                            from the title's Bot Teal field, so a
+                                            divider still reads as a new chapter */
+  color: var(--t-headline-soft);
 }
-.s-section .bleed-stewart { --bleed-color: var(--c-brown-dark); }  /* amber on amber */
+  /* Bot Teal outline on Bot Teal Dark */
 .s-section .content-area {
   display: flex;
   flex-direction: column;
@@ -373,13 +541,13 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   font-family: var(--font-heading);
   font-weight: 800;
   font-size: 72px;
-  color: var(--c-brown);
+  color: var(--t-headline);              /* Bot Teal — the saturated inset */
   line-height: 1;
   letter-spacing: -0.02em;
 }
-.s-section .eyebrow { color: var(--c-brown); margin-bottom: 28px; }
-.s-section .h-title { color: var(--c-brown-dark); margin-top: 28px; max-width: 980px; }
-.s-section .body { color: var(--c-brown-dark); margin-top: 32px; max-width: 760px; opacity: 0.85; }
+.s-section .eyebrow { color: var(--t-headline); margin-bottom: 28px; }
+.s-section .h-title { color: var(--t-headline-soft); margin-top: 28px; max-width: 980px; }
+.s-section .body { color: var(--t-headline-soft); margin-top: 32px; max-width: 760px; opacity: 0.85; }
 
 /* =========================================================================
    Slide — Big stat (single bg + rounded card; no split inset)
@@ -392,7 +560,7 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   align-items: center;
 }
 .s-stat .left { display: flex; flex-direction: column; gap: 28px; }
-.s-stat .left .eyebrow { color: var(--t-accent-soft); }
+.s-stat .left .eyebrow { color: var(--t-accent); }
 .s-stat .stat-num {
   margin-top: 28px; /* eyebrow → stat gap is ~2x the stat → headline gap (56px effective) */
   font-family: var(--font-heading);
@@ -404,17 +572,18 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
 }
 .s-stat .left .h-3 { color: var(--t-headline-soft); max-width: 600px; }
 .s-stat .card {
-  background: var(--t-headline-soft);
-  color: var(--t-bg-deep);
+  background: var(--t-panel);
+  color: var(--t-on-panel);
+  box-shadow: var(--t-card-shadow);
   border-radius: 50px;
   padding: 56px 52px;
   display: flex;
   flex-direction: column;
   gap: 22px;
 }
-.s-stat .card .eyebrow { color: var(--t-bg-section); }
-.s-stat .card .h-3 { color: var(--t-bg-deep); max-width: 540px; }
-.s-stat .card .body { color: var(--t-bg-section); max-width: 540px; }
+.s-stat .card .eyebrow { color: var(--t-on-panel); opacity: 0.75; }
+.s-stat .card .h-3 { color: var(--t-on-panel); max-width: 540px; }
+.s-stat .card .body { color: var(--t-on-panel); max-width: 540px; }
 
 /* =========================================================================
    Slide — Text + bullets (standard content)
@@ -422,7 +591,7 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
 .s-bullets .content-area { display: flex; flex-direction: column; gap: 50px; }
 .s-bullets .eyebrow { color: var(--t-headline); }
 .s-bullets .h-2 { color: var(--t-headline-soft); max-width: 1500px; }
-.s-bullets.theme-light .h-2 { color: var(--brand-teal); } /* light variant: primary #00BBB4 */
+
 .s-bullets ul.bullets {
   list-style: none;
   margin: 0;
@@ -431,12 +600,17 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   grid-template-columns: repeat(3, 1fr);
   gap: 36px;
 }
+/* Bare column with an amber top rule by default; a theme that sets the
+   --t-item-* tokens gets an inset box instead. The .ic-item illustration is the
+   first child, so it sits inside the box automatically. */
 .s-bullets ul.bullets li {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 32px 32px 32px 0;
-  border-top: 3px solid var(--t-accent);
+  padding: var(--t-item-pad);
+  border-top: var(--t-item-rule);
+  background: var(--t-item-fill);
+  border-radius: var(--t-item-radius);
 }
 .s-bullets ul.bullets .h-4 { color: var(--t-headline); }
 .s-bullets ul.bullets .body-sm { color: var(--t-body-on-dark); }
@@ -456,7 +630,7 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   gap: 24px;
 }
 .s-compare .col.before { background: var(--t-bg-card); }
-.s-compare .col.after  { background: var(--t-headline); color: var(--t-bg-deep); }
+.s-compare .col.after  { background: var(--t-panel); color: var(--t-on-panel); }
 .s-compare .col .lbl {
   font-family: var(--font-body);
   font-weight: 700;
@@ -465,11 +639,11 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   text-transform: uppercase;
   margin: 0;
 }
-.s-compare .col.before .lbl { color: var(--t-body-on-dark); opacity: 0.65; }
-.s-compare .col.after  .lbl { color: var(--t-bg-deep); opacity: 0.7; }
+.s-compare .col.before .lbl { color: var(--t-on-card-body); opacity: 0.65; }
+.s-compare .col.after  .lbl { color: var(--t-on-panel); opacity: 0.7; }
 .s-compare .col .h-3 { font-size: 36px; }
-.s-compare .col.before .h-3 { color: var(--t-headline-soft); }
-.s-compare .col.after  .h-3 { color: var(--t-bg-deep); }
+.s-compare .col.before .h-3 { color: var(--t-on-card-strong); }
+.s-compare .col.after  .h-3 { color: var(--t-on-panel); }
 .s-compare .col ul {
   list-style: none;
   margin: 0;
@@ -487,21 +661,33 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   gap: 14px;
   align-items: flex-start;
 }
+/* Both glyphs are masks now, so their colour is a token. The ✕ was hardcoded
+   #FF4C54 — off-palette; canonical Alert Coral is #F15B5B, which --t-coral holds.
+   Longhand mask properties only (the shorthand no-ops in headless Chromium). */
 .s-compare .col li::before {
   content: '';
   display: inline-block;
   width: 22px; height: 22px; flex-shrink: 0;
   margin-top: 6px;
-  background-size: contain; background-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
 }
 .s-compare .col.before li::before {
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'><line x1='5' y1='5' x2='17' y2='17' stroke='%23FF4C54' stroke-width='3' stroke-linecap='round'/><line x1='17' y1='5' x2='5' y2='17' stroke='%23FF4C54' stroke-width='3' stroke-linecap='round'/></svg>");
+  background-color: var(--t-coral);
+  -webkit-mask-image: var(--glyph-cross);
+  mask-image: var(--glyph-cross);
 }
 .s-compare .col.after li::before {
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'><polyline points='4,12 9,17 18,6' fill='none' stroke='%23082C2C' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-color: var(--t-on-panel);
+  -webkit-mask-image: var(--glyph-check-lg);
+  mask-image: var(--glyph-check-lg);
 }
-.s-compare .col.before li { color: var(--t-body-on-dark); }
-.s-compare .col.after  li { color: var(--t-bg-deep); }
+.s-compare .col.before li { color: var(--t-on-card-body); }
+.s-compare .col.after  li { color: var(--t-on-panel); }
 
 /* =========================================================================
    Slide — Image-led (single bg + rounded illustration card; no split inset)
@@ -510,6 +696,11 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
 .s-image .content-area {
   display: grid;
   grid-template-columns: 1fr 1.05fr;
+  /* Pin the row to the content area so the art column can be given a definite
+     height to size against; without this the row is content-sized and a tall
+     illustration takes its full intrinsic height (Education-thinking ran 11px
+     past the footer line before this). */
+  grid-template-rows: minmax(0, 100%);
   gap: 80px;
   align-items: center;
 }
@@ -517,19 +708,29 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
 .s-image .text .eyebrow { color: var(--t-headline); }
 .s-image .text .h-title { color: #fff; font-size: var(--type-title); }  /* matches s-section divider (96px); autofit shrinks if copy runs long */
 .s-image .text .body { color: var(--t-body-on-dark); max-width: 600px; }
-.s-image .frame {
-  background: var(--t-headline);
-  border-radius: 50px;
-  aspect-ratio: 1.15 / 1;
-  width: 100%;
+/* The illustration is featured bare — no inset frame. The old .frame painted a
+   --t-headline panel behind the art, which boxed it in and (in vibrant) put a
+   primary-teal card on the working surface for no informational reason. With
+   the art directly on the ground, the PAIRING TABLE NOW APPLIES TO THE GROUND:
+   both themes put s-image on a teal-family ground, so teal-dominant pieces
+   (Workflow-playbook, the chart pair, Education-steps-to-learn) go flat here —
+   the template ships Education-thinking (indigo), which clears both themes. */
+/* The art column stretches to the full (definite) row height while the text
+   column stays centered; the img fills the column box and object-fit letterboxes
+   the actual artwork inside it. The img's BOX therefore ends exactly at the
+   footer line however tall the SVG's intrinsic aspect is — the geometry no
+   longer depends on which illustration is chosen. */
+.s-image .art {
+  align-self: stretch;
+  min-height: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
 }
-.s-image .frame img {
-  width: 72%;
-  height: 72%;
+.s-image .art img {
+  width: 100%;
+  max-width: 680px;
+  height: 100%;
   object-fit: contain;
 }
 
@@ -545,11 +746,23 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   gap: 24px;
   position: relative;
 }
+/* The step interior is a GRID with explicit rows, not a flex column, so all four
+   steps share one baseline grid: badge row, art row, title row, copy row. As a
+   flex column it bottom-aligned the text with `margin-top:auto`, which meant the
+   title's y position was set by how many lines its own description happened to
+   wrap to — and the 200px art box was flex-shrinkable, so a taller intrinsic SVG
+   (Chart-going-up on step 4) squeezed differently from its neighbours. Either
+   way the four titles landed on four different lines. Fixed rows remove both
+   causes: nothing shrinks, and no row's height depends on sibling copy length.
+   The title row reserves two lines so one- and two-line titles agree. */
 .s-process .flow .step {
+  box-shadow: var(--t-card-shadow);
   background: var(--t-bg-card);
   border-radius: 32px;
   padding: 36px 32px 36px;
-  display: flex; flex-direction: column; gap: 18px;
+  display: grid;
+  grid-template-rows: 60px 200px minmax(64px, auto) 1fr;
+  gap: 18px;
   position: relative;
   min-height: 340px;
 }
@@ -557,26 +770,33 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   width: 60px; height: 60px;
   border-radius: 50%;
   background: var(--t-coral);
-  color: #fff;
+  color: var(--t-on-coral);
   font-family: var(--font-heading);
   font-weight: 700;
   font-size: 26px;
   display: flex; align-items: center; justify-content: center;
 }
-.s-process .flow .step .ic { width: 200px; height: 200px; align-self: flex-end; opacity: 0.92; }
+/* justify-self, not align-self: the cross axis is horizontal in a grid row.
+   object-fit keeps each SVG's own aspect ratio inside the fixed 200px box, so
+   the art no longer changes the box it sits in. */
+.s-process .flow .step .ic {
+  width: 200px; height: 200px;
+  justify-self: end;
+  object-fit: contain;
+  opacity: 0.92;
+}
 .s-process .flow .step .ttl {
   font-family: var(--font-heading);
   font-weight: 700;
   font-size: 26px;
-  color: var(--t-headline);
-  margin-top: auto;
+  color: var(--t-on-card-label);
 }
 .s-process .flow .step .desc {
   font-family: var(--font-body);
   font-weight: 500;
   font-size: 24px;
   line-height: 1.4;
-  color: var(--t-body-on-dark);
+  color: var(--t-on-card-body);
 }
 .s-process .flow .step::after {
   content: '';
@@ -584,7 +804,17 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   right: -22px; top: 50%;
   width: 20px; height: 20px;
   transform: translateY(-50%);
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><polyline points='6,3 13,10 6,17' fill='none' stroke='%23A5DFDF' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg>") center/contain no-repeat;
+  /* The chevron sits in the gap BETWEEN two cards, so it lives on the slide
+     ground and takes the ground's headline colour — not the card type set. */
+  background-color: var(--t-headline-soft);
+  -webkit-mask-image: var(--glyph-chevron);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+  mask-image: var(--glyph-chevron);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
   z-index: 3;
 }
 .s-process .flow .step:last-child::after { display: none; }
@@ -595,30 +825,56 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
 .s-timeline .content-area { display: flex; flex-direction: column; gap: 56px; }
 .s-timeline .eyebrow { color: var(--t-headline); }
 .s-timeline .h-2 { color: var(--t-headline-soft); max-width: 1500px; }
+/* The rail is a BAND above the content, not a line through it: a rule across the
+   top, a dot per column sitting on the rule, then the column's text below it.
+   Three numbers describe that band and they live here as tokens, because they
+   have to agree and twice now they haven't:
+     --rail-rule-y  where the 2px rule sits, measured from the rail's top edge
+     --rail-dot     the dot's diameter
+     --rail-band    the padding that reserves the band, i.e. where text starts
+   The dot is absolutely positioned inside .qtr, and .qtr is a GRID ITEM, so its
+   box begins after --rail-band. Reaching the rule from there is a NEGATIVE
+   offset. Up to 1.9 the dot used a positive top:19px, as if it were positioned
+   against .rail — which put it 76px too low, printing the dot and its 6px halo
+   straight through the column's label text. Don't hand-compute these offsets
+   again; keep them in calc() off the tokens so the geometry can't drift. */
 .s-timeline .rail {
+  --rail-rule-y: 30px;
+  --rail-dot: 22px;
+  --rail-band: 76px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 0;
   position: relative;
-  padding-top: 60px;
+  padding-top: var(--rail-band);
 }
+/* Starts flush with the first column's text (and its dot) and stops at the last
+   column's text edge — .qtr's 24px right padding — so the rule spans the content
+   it describes rather than being arbitrarily inset from the grid. */
 .s-timeline .rail::before {
   content: '';
   position: absolute;
-  left: 30px; right: 30px; top: 90px;
+  left: 0; right: 24px;
+  top: var(--rail-rule-y);
   height: 2px;
   background: var(--t-divider);
 }
 .s-timeline .qtr { padding: 0 24px 0 0; position: relative; }
 .s-timeline .qtr .dot {
   position: absolute;
-  top: 48px; left: 0;
-  width: 22px; height: 22px;
+  /* Centre of the dot on the centre of the 2px rule, expressed from .qtr's own
+     top edge: (rule centre) − (band) − (half the dot) = 31 − 76 − 11 = −56px. */
+  top: calc(var(--rail-rule-y) + 1px - var(--rail-band) - var(--rail-dot) / 2);
+  left: 0;
+  width: var(--rail-dot); height: var(--rail-dot);
   border-radius: 50%;
   background: var(--t-accent);
+  /* Punches the rule out around each dot in the rendered formats. The editable
+     PPTX has no equivalent — the dot lifts as a plain native oval and the rule
+     stays baked, so there the line reads as passing behind the dot. */
   box-shadow: 0 0 0 6px var(--t-bg-deep);
 }
-.s-timeline .qtr.done .dot { background: var(--t-headline); }
+.s-timeline .qtr.done .dot { background: var(--t-mark); }
 .s-timeline .qtr .label {
   font-family: var(--font-body);
   font-weight: 700;
@@ -634,7 +890,10 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   font-size: 30px;
   color: var(--t-headline-soft);
   line-height: 1.1;
-  margin-top: 70px;
+  /* Was 70px, which existed to push the heading clear of the mispositioned dot.
+     With the rail lifted into its own band the heading only needs a normal gap
+     after the art, and it reads the same whether or not an .ic-item is present. */
+  margin-top: 28px;
   margin-bottom: 18px;
 }
 .s-timeline .qtr ul {
@@ -699,7 +958,7 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   color: var(--t-headline-soft);
 }
 .s-table tbody td:not(:first-child) { text-align: center; }
-.s-table tbody tr:hover { background: rgba(255,255,255,0.02); }
+.s-table tbody tr:hover { background: var(--t-tint); }
 .s-table .pill {
   display: inline-block;
   padding: 10px 22px;
@@ -709,9 +968,9 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
-.s-table .pill.good   { background: var(--t-headline); color: var(--t-bg-deep); }
-.s-table .pill.warn   { background: var(--t-accent); color: var(--t-bg-deep); }
-.s-table .pill.muted  { background: rgba(255,255,255,0.08); color: var(--t-body-on-dark); }
+.s-table .pill.good   { background: var(--t-panel); color: var(--t-on-panel); }
+.s-table .pill.warn   { background: var(--t-accent); color: var(--t-on-accent); }
+.s-table .pill.muted  { background: var(--t-tint-strong); color: var(--t-body-on-dark); }
 
 /* =========================================================================
    Slide — Team grid
@@ -725,6 +984,7 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   gap: 32px;
 }
 .s-team .card {
+  box-shadow: var(--t-card-shadow);
   background: var(--t-bg-card);
   border-radius: 32px;
   padding: var(--box-pad-min);
@@ -752,22 +1012,26 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
    coral → indigo), flat, with cream initials. Reads as a colorful, on-brand
    line-up on both cream and dark backgrounds. */
 .s-team .card .avatar::after { display: none; }
-.s-team .card:nth-child(2) .avatar { background: var(--c-orange); }
+.s-team .card:nth-child(2) .avatar { background: var(--c-amber); }
 .s-team .card:nth-child(3) .avatar { background: var(--c-coral); }
 .s-team .card:nth-child(4) .avatar { background: var(--c-indigo); }
 .s-team .card .name {
   font-family: var(--font-heading);
   font-weight: 700;
   font-size: 26px;
-  color: var(--t-headline-soft);
+  color: var(--t-on-card-strong);
   margin: 0;
 }
+/* The 0.8 opacity stays — it's what the dark deck renders today, and this token
+   set is meant to be provably no-change when unset. It does mean --t-on-card-body
+   is composited toward the card fill, so a theme must pick a value that still
+   clears AA at 80%: vibrant's #005655 lands at 5.13:1 over white once blended. */
 .s-team .card .role {
   font-family: var(--font-body);
   font-weight: 500;
   font-size: 24px;
   line-height: 1.4;
-  color: var(--t-body-on-dark);
+  color: var(--t-on-card-body);
   opacity: 0.8;
   margin: 0;
 }
@@ -784,6 +1048,7 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   gap: 28px;
 }
 .s-pricing .tier {
+  box-shadow: var(--t-card-shadow);
   background: var(--t-bg-card);
   border-radius: 40px;
   padding: 44px 40px 40px;
@@ -793,25 +1058,25 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   position: relative;
 }
 .s-pricing .tier.feature {
-  background: var(--t-headline);
-  color: var(--t-bg-deep);
+  background: var(--t-panel);
+  color: var(--t-on-panel);
 }
 .s-pricing .tier .name {
   font-family: var(--font-heading);
   font-weight: 700;
   font-size: 28px;
-  color: var(--t-headline);
+  color: var(--t-on-card-label);
 }
-.s-pricing .tier.feature .name { color: var(--t-bg-deep); }
+.s-pricing .tier.feature .name { color: var(--t-on-panel); }
 .s-pricing .tier .price {
   font-family: var(--font-heading);
   font-weight: 700;
   font-size: 72px;
   line-height: 1;
-  color: var(--t-headline-soft);
+  color: var(--t-on-card-strong);
   letter-spacing: -0.02em;
 }
-.s-pricing .tier.feature .price { color: var(--t-bg-deep); }
+.s-pricing .tier.feature .price { color: var(--t-on-panel); }
 .s-pricing .tier .price .per {
   font-size: 24px;
   font-weight: 500;
@@ -825,20 +1090,23 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   font-size: 24px;
   font-weight: 500;
   line-height: 1.4;
-  color: var(--t-body-on-dark);
+  color: var(--t-on-card-body);
   min-height: 56px;
 }
-.s-pricing .tier.feature .desc { color: var(--t-bg-deep); opacity: 0.85; }
+.s-pricing .tier.feature .desc { color: var(--t-on-panel); opacity: 0.85; }
 .s-pricing .tier ul {
   list-style: none;
   margin: 0;
   padding: 16px 0 0;
-  border-top: 1px solid var(--t-divider);
+  /* Card divider, not the ground divider. --t-divider is tuned to the slide
+     ground, so on a card whose fill differs from the ground it disappeared —
+     and the featured tier then needed a hardcoded rgba() to compensate, which
+     itself went invisible once that tier darkened to #082C2C. */
+  border-top: 1px solid var(--t-on-card-divider);
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
-.s-pricing .tier.feature ul { border-top-color: rgba(8,44,44,0.18); }
 .s-pricing .tier li {
   font-family: var(--font-body);
   font-weight: 500;
@@ -847,27 +1115,37 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   display: flex;
   gap: 12px;
   align-items: flex-start;
-  color: var(--t-body-on-dark);
+  color: var(--t-on-card-body);
 }
-.s-pricing .tier.feature li { color: var(--t-bg-deep); }
+.s-pricing .tier.feature li { color: var(--t-on-panel); }
+/* Mask, not background-image: the stroke colour used to be baked in, so when the
+   vibrant featured tier darkened to #082C2C its hardcoded #082C2C ticks vanished
+   into the fill. Now each tick takes a token that inverts against what it sits on.
+   Longhand mask properties only (the shorthand no-ops in headless Chromium). */
 .s-pricing .tier li::before {
   content: '';
   display: inline-block;
   width: 18px; height: 18px; flex-shrink: 0;
   margin-top: 5px;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'><polyline points='3,9 8,14 15,4' fill='none' stroke='%2300BBB4' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/></svg>");
-  background-size: contain;
-  background-repeat: no-repeat;
+  background-color: var(--t-on-card-mark);
+  -webkit-mask-image: var(--glyph-check);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+  mask-image: var(--glyph-check);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
 }
-.s-pricing .tier.feature li::before {
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'><polyline points='3,9 8,14 15,4' fill='none' stroke='%23082C2C' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/></svg>");
-}
+/* The featured tier paints from the panel pair, so its ticks follow --t-on-panel
+   and stay legible whichever half of that pair is the light one. */
+.s-pricing .tier.feature li::before { background-color: var(--t-on-panel); }
 .s-pricing .tier .ribbon {
   position: absolute;
   top: -18px;
   right: 32px;
   background: var(--t-accent);
-  color: var(--t-bg-deep);
+  color: var(--t-on-accent);
   font-family: var(--font-body);
   font-weight: 700;
   font-size: 24px;
@@ -898,94 +1176,58 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   letter-spacing: -0.015em;
 }
 .s-quote .qbox {
-  background: var(--t-headline-soft);
+  background: var(--t-panel);
   border-radius: 50px;
   padding: 100px 56px 50px;
   position: relative;
-  color: var(--t-bg-deep);
+  color: var(--t-on-panel);
 }
 .s-quote .qmark {
   position: absolute;
   left: 36px; top: -64px;
   width: 130px; height: 130px;
 }
-.s-quote .qmark img { width: 100%; height: 100%; display: block; }
+.s-quote .qmark img { width: 100%; height: 100%; display: block;
+                      object-fit: contain; }
 .s-quote .qtext {
   font-family: var(--font-body);
   font-weight: 500;
   font-size: 26px;
   line-height: 1.45;
-  color: var(--t-bg-deep);
+  color: var(--t-on-panel);
   margin: 0 0 32px;
 }
 .s-quote .qname {
   font-family: var(--font-heading);
   font-weight: 700;
   font-size: 26px;
-  color: var(--t-bg-deep);
+  color: var(--t-on-panel);
   margin: 0;
 }
 .s-quote .qrole {
   font-family: var(--font-body);
   font-weight: 500;
   font-size: 24px;
-  color: var(--t-bg-section);
-  opacity: 0.85;
+  color: var(--t-on-panel);
+  opacity: 0.7;
   margin-top: 4px;
-}
-
-/* =========================================================================
-   Slide — Q&A
-   ========================================================================= */
-.s-qa { background: var(--t-bg-deep); }
-.s-qa .content-area {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 0 110px;
-}
-.s-qa .h-display {
-  color: var(--t-headline);
-  font-size: 280px;
-  letter-spacing: -0.04em;
-  line-height: 0.9;
-}
-.s-qa .h-display .amp { color: var(--t-accent); }
-.s-qa .sub {
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: 30px;
-  color: var(--t-body-on-dark);
-  margin-top: 36px;
-  max-width: 1000px;
-}
-.s-qa .prompts {
-  display: flex;
-  gap: 16px;
-  margin-top: 50px;
-  flex-wrap: wrap;
-}
-.s-qa .prompts .chip {
-  background: var(--t-bg-card);
-  border: 1px solid var(--t-divider);
-  border-radius: 999px;
-  padding: 14px 26px;
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 24px;
-  color: var(--t-headline-soft);
 }
 
 /* =========================================================================
    Slide — Closing / Thank you
    ========================================================================= */
 .s-close { background: var(--t-bg-deep); padding: 0; }
+/* Centred vertically rather than top-aligned. The content area is a fixed 950px
+   (the footer band is already reserved by `inset: 0 0 130px 0`), and this slide's
+   content only ran to about 550px of it, so everything sat high with the bottom
+   quarter of the canvas empty. Equal top and bottom padding plus centred items
+   splits the leftover space instead of banking all of it at the bottom. */
 .s-close .content-area {
   display: grid;
   grid-template-columns: 0.85fr 1.15fr;
   gap: 50px;
-  padding: var(--pad-top) var(--pad-x) 0;  /* symmetric 110px gutters — no left Stewart to clear */
+  padding: var(--pad-top) var(--pad-x);  /* symmetric 110px gutters — no left Stewart to clear */
+  align-items: center;
 }
 .s-close .content-area > div:first-child {
   /* Left column (eyebrow / Questions? / body) rides the vertical middle of
@@ -996,7 +1238,7 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
 }
 .s-close .eyebrow { margin-bottom: 28px; }  /* breathing room above the headline, matching s-section */
 .s-close .h-title {
-  color: var(--t-headline);
+  color: var(--t-hero-title);
   font-size: var(--type-title);  /* matches the s-section divider title (was 120px) */
   letter-spacing: -0.02em;
 }
@@ -1006,11 +1248,13 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   max-width: 760px;
 }
 .s-close .cta-card {
-  background: var(--t-headline);
+  background: var(--t-panel);
   border-radius: 40px;
   padding: 40px 40px;
-  margin-top: 48px;
-  color: var(--t-bg-deep);
+  /* Was margin-top: 48px, which pushed the card down under the old top-aligned
+     layout. Now that the row is centred it would just skew the card off centre. */
+  margin-top: 0;
+  color: var(--t-on-panel);
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -1023,7 +1267,7 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   text-transform: uppercase;
   opacity: 0.7;
 }
-.s-close .cta-card .h-3 { color: var(--t-bg-deep); font-size: 36px; }
+.s-close .cta-card .h-3 { color: var(--t-on-panel); font-size: 36px; }
 .s-close .cta-card .contacts {
   display: grid;
   grid-template-columns: 1fr;   /* single column: values never wrap, regardless of length */
@@ -1034,7 +1278,7 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   font-family: var(--font-body);
   font-size: 24px;
   font-weight: 500;
-  color: var(--t-bg-deep);
+  color: var(--t-on-panel);
 }
 .s-close .cta-card .contacts strong {
   display: block;
@@ -1042,60 +1286,434 @@ deck-stage > section:has(.bleed-stewart) .pageno { display: none; }
   font-size: 24px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  opacity: 0.6;
+  /* 0.6 landed these field labels at 2.90:1 vibrant / 2.88:1 dark against the
+     CTA card — both a hair under 3:1. 0.7 clears it in both (3.56 / 3.50) and
+     keeps them subordinate to the values beneath them. Changes the dark deck
+     too, deliberately: it was equally under the line there. */
+  opacity: 0.7;
   margin-bottom: 4px;
 }
 
 /* =========================================================================
-   LIGHT THEME — targeted contrast fixes
-   The token remap handles 90%; these keep cards/avatars reading cleanly on
-   the cream background.
+   THEME-VIBRANT — PER-SLIDE COLOUR MAP
+   Everything below is TOKENS ONLY. No selectors paint properties here; the base
+   rules already consume these names. To restyle a slide, change a value — you
+   should never need to add a rule to this section.
+
+     --t-bg-deep      the slide ground
+     --t-panel        nested panel fill      --t-on-panel   type on that panel
+     --t-headline     eyebrows, labels       --t-headline-soft  headlines
+     --t-body-on-dark body copy              --t-accent     CTA / stat numeral
+     --t-accent-soft  quieter accent         --t-on-accent  type on an amber fill
+     --t-stewart      bleed silhouette       --t-mark       primary-teal marks
+     --t-card-shadow  card elevation         --t-tint(-strong)  hairline tints
+     --t-item-fill/-radius/-pad/-rule  repeating column item: unset = bare
+                      column with an amber top rule, set = inset box
    ========================================================================= */
 
-/* Big stat: keep the explainer card white with teal text (not inverted) */
-.theme-light .s-stat .card { background: #FFFFFF; box-shadow: 0 24px 60px rgba(8,44,44,0.10); }
-.theme-light .s-stat .card .eyebrow { color: var(--t-headline); }
-.theme-light .s-stat .card .h-3 { color: var(--t-headline-soft); }
-.theme-light .s-stat .card .body { color: var(--t-body-on-dark); }
-.s-stat.theme-light .left .eyebrow { color: var(--t-accent); }      /* Trigger Amber #F9A100 */
-.s-stat.theme-light .stat-num { color: var(--brand-teal); }         /* primary Bot Teal #00BBB4 */
+/* Theme-wide: cards lift off a light ground, tints darken instead of lighten,
+   and the completed timeline dot holds primary Bot Teal whatever the family. */
+.theme-vibrant {
+  --t-card-shadow: 0 18px 44px rgba(8,44,44,0.08);
+  --t-tint:        rgba(8,44,44,0.03);
+  --t-tint-strong: rgba(8,44,44,0.08);
+  --t-mark:        var(--brand-teal);
+  --t-on-coral:    var(--c-coral-deep);
 
-/* Team: white cards with a soft shadow so they read on cream. Avatars keep the
-   base full-spectrum primary fills (teal / orange / coral / indigo). */
-.theme-light .s-team .card { box-shadow: 0 18px 44px rgba(8,44,44,0.08); }
+  /* --t-bg-card is white theme-wide, so the card interior needs its own type set
+     — without these it inherits whatever the GROUND uses, which is how s-process
+     ended up with pale indigo on white and s-team with pale teal on white. Card
+     type is the teal family's dark and deep stops, which clear white comfortably:
+     #005655 at 8.52:1 and #082C2C at 14.9:1.
 
-/* Bullets: warm accent rule reads well on cream as-is; nudge body weight */
-.theme-light .s-bullets .body-sm { color: var(--t-body-on-dark); }
+     --t-on-card-mark is the DARK stop, not primary Bot Teal: #00BBB4 on white is
+     only 2.40:1, under the 3:1 that WCAG 1.4.11 asks of a non-text glyph. The one
+     slide whose marks should stay primary teal (pricing) sets it back explicitly,
+     because its cards aren't white. */
+  --t-on-card-label:   var(--c-teal-dark);
+  --t-on-card-strong:  var(--c-teal-deep);
+  --t-on-card-body:    var(--c-teal-dark);
+  --t-on-card-mark:    var(--c-teal-dark);
+  --t-on-card-divider: rgba(8,44,44,0.18);
+}
+
+/* HERO — s-title. Primary Bot Teal field; type and Stewart are the family's deep
+   and dark stops. See the tone-on-tone rule in references/slides.md. */
+.theme-vibrant .s-title {
+  --t-panel:    var(--brand-teal);
+  --t-on-panel: var(--c-teal-deep);
+  --t-stewart:  var(--c-teal-dark);
+}
+
+/* SECTION DIVIDER — saturated Trigger Amber, one step down for Stewart and
+   label, deep for the title. */
+.theme-vibrant .s-section {
+  --t-bg-section:    var(--c-amber);
+  --t-headline:      var(--c-amber-dark);
+  --t-headline-soft: var(--c-amber-deep);
+  --t-stewart:       var(--c-amber-dark);
+  --logo:            var(--logo-dark);
+}
+
+/* TESTIMONIAL — s-quote on Ops Indigo. Bot Teal Pale pull-quote panel: primary
+   teal would only reach 3.56:1 for the quote body. Amber lead-in, softened for
+   the eyebrow so it doesn't shout over the headline. */
+.theme-vibrant .s-quote {
+  --t-panel:       var(--c-teal-pale);
+  --t-on-panel:    var(--c-teal-deep);
+  --t-accent-soft: var(--c-amber-light);
+}
+
+/* STAT — white explainer card on the working surface. The base panel fill would
+   be primary teal, which only manages 3.56:1 against this ground. */
+.theme-vibrant .s-stat {
+  --t-panel:       var(--c-white);
+  --t-on-panel:    var(--c-teal-deep);
+  --t-card-shadow: 0 24px 60px rgba(8,44,44,0.10);
+}
+
+/* CLOSE — the CTA card is the primary button, so it takes Trigger Amber rather
+   than the default panel fill. */
+.theme-vibrant .s-close {
+  --t-panel:      var(--t-accent);
+  --t-on-panel:   var(--c-amber-deep);
+  --t-hero-title: var(--c-teal-pale);   /* pale, so the eyebrow keeps primary teal */
+}
 
 /* =========================================================================
-   MANDATORY BOT TEAL ANCHOR  (brand rule: primary Bot Teal #00BBB4 on every slide)
+   ILLUSTRATIONS — the approved isometric set
    -------------------------------------------------------------------------
-   Most slides already carry Bot Teal through eyebrows, indicators, the title
-   and image backgrounds, and the feature pricing tier. A few archetypes
-   (section dividers on amber, the big-stat panel, the quote slide, and the
-   cream light-theme variants) lead with other brand colors and would not
-   otherwise show the primary teal. Rather than special-case each one, every
-   slide carries a small Bot Teal indicator dot in the footer band. It reads
-   as a deliberate deck-rhythm mark, sits in reserved chrome space so it never
-   collides with content, and on the all-teal slides (title / image-led) it
-   simply blends into the background that is already Bot Teal — so the rule
-   holds everywhere by construction. This also applies to slides authored
-   after the template, which is the point: the guarantee shouldn't depend on
-   anyone remembering it.
-   If you ever need to suppress it on a specific slide, add class="no-teal-dot"
-   to that <section> and place your own #00BBB4 element instead.
+   These are fixed-palette, multi-colour SVGs; they are NOT recoloured per slide,
+   because the multi-colour isometric look is the reason to use them. That means
+   each one has a dominant family and will lose definition on a ground of that
+   same family. Pair by contrast — see the table in references/slides.md.
+
+   Four placements, used across both themes:
+     .ic-item            ~96px  one per repeating item (bullet, tier, quarter)
+     .illus-corner       ~280px a single supporting piece, bottom-right
+     .illus-topright     ~210px header-band slot for dense archetypes
+     .illus-panel-corner ~300px straddling an inset panel's top-right corner
+     .illus-col          ~420px a feature piece filling an empty column
+
+   .illus-corner and .illus-topright are absolutely positioned and deliberately
+   sit inside the 110px right gutter and clear of the footer band, so they never
+   trip `deck.py check`.
+
+   .illus-panel-corner is the exception: it hangs off its panel's top-right
+   corner and is ALLOWED to bleed past the 110px gutter. `deck.py check` exempts
+   it by class, alongside the bleed Stewart and the footers. Only the bleed
+   Stewart and this may cross the margin.
+
+   All of these are art, not content — keep real content out of them.
+
+   Every fixed-size slot below carries `object-fit: contain`. The approved SVGs
+   are all non-square (350×445, 412×249, ...), so a slot that pins both
+   dimensions without it squashes the art to the slot's shape — which is exactly
+   what shipped through v1.6 on every .ic-item. Keep `contain` on any new slot
+   that sets both width and height. (The PPTX exporter reads object-fit and
+   object-position to place the art's PAINTED rect, so these properties are
+   load-bearing for exports, not just for the browser.)
    ========================================================================= */
-deck-stage section::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: 54px;
-  transform: translateX(-50%);
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: #00BBB4;   /* primary Bot Teal — do not change */
-  z-index: 5;
-  pointer-events: none;
+.ic-item {
+  display: block;
+  width: 96px;
+  height: 96px;
+  margin-bottom: 18px;
+  flex: 0 0 auto;
+  /* left: aligned with the text column under it; bottom: the art hugs the
+     headline below, so the visual gap doesn't grow when a piece runs short. */
+  object-fit: contain;
+  object-position: left bottom;
 }
-deck-stage section.no-teal-dot::after { content: none; }
+.illus-corner {
+  position: absolute;
+  right: var(--pad-x);
+  bottom: 150px;
+  width: 280px;
+  height: 280px;
+  pointer-events: none;
+  z-index: 0;
+  /* anchored into its corner; the box already clears the footer band */
+  object-fit: contain;
+  object-position: right bottom;
+}
+.illus-col {
+  display: block;
+  width: 100%;
+  max-width: 460px;
+  height: auto;
+}
+/* Header-band slot: sits to the right of a headline, which is capped at 1500px
+   and so always leaves this column free. Use on the dense archetypes, where a
+   bottom-corner piece would sit behind a table or tier column. */
+.illus-topright {
+  position: absolute;
+  right: var(--pad-x);
+  top: 84px;
+  width: 210px;
+  height: 210px;
+  pointer-events: none;
+  z-index: 0;
+  /* anchored into its corner of the header band */
+  object-fit: contain;
+  object-position: right top;
+}
+/* Panel-corner slot: art hung on an inset panel's top-right corner, straddling
+   it — the upper part sits on the slide ground, the lower part on the panel
+   fill. Because it spans two grounds, the illustration must clear BOTH (see the
+   pairing table in references/slides.md); a piece that matches either one loses
+   definition across half of itself.
+
+   Unlike the other placements this one bleeds past the 110px gutter by design.
+   `deck.py check` exempts it by class, so don't rename it without updating
+   _MARGIN_JS in scripts/deck.py. Keep it clear of the footer band — hang it off
+   a panel's TOP corner only, never the bottom. */
+.illus-panel-corner {
+  position: absolute;
+  top: calc(-72px * var(--density-scale));
+  right: calc(-48px * var(--density-scale));
+  width: calc(300px * var(--density-scale));
+  height: calc(300px * var(--density-scale));
+  pointer-events: none;
+  z-index: 2;
+  /* centered, not cornered: the piece straddles the panel edge, and keeping it
+     centered in its box preserves the above/below-the-edge balance */
+  object-fit: contain;
+}
+/* The host box becomes the positioning context automatically, so the class can
+   be dropped into any card or panel without a matching CSS rule. */
+deck-stage section *:has(> .illus-panel-corner) { position: relative; }
+
+/* Content paints above the art if they ever overlap. z-index ONLY — the base
+   .content-area rule already positions the element (absolute, inset to reserve
+   the footer band), so z-index takes effect without restating position here.
+
+   `position: relative` used to be in this rule, and it was a quiet disaster:
+   this selector (0-1-2) outweighs `.content-area` (0-1-0), so relative BEAT the
+   base rule's absolute and every content area silently became a normal-flow,
+   auto-height box. Three things depended on that height being definite and all
+   three broke without a visible error: the 130px footer reserve (content could
+   run straight over the logo), the headline autofit (an auto-height box never
+   reports scrollHeight > clientHeight, so it never fired), and any percentage
+   row track inside a content area (indefinite container → percentage → auto).
+   If content must paint above art, raise the CHILD, not this box's position. */
+deck-stage section .content-area { z-index: 1; }
+
+/* Per-archetype sizing for the in-column pieces. */
+.s-close .illus-col { max-width: 360px; margin-top: 12px; }
+/* Agenda's lead column: the list spread fills the right column's full height,
+   which left the left column bottom-heavy with empty space. margin-top:auto
+   anchors the art to the column's bottom edge — which is the content-area's
+   bottom, 130px above the slide edge, so it can never reach the logo. The
+   flex-shrink/min-height pair lets it shed height first if the text above
+   grows; object-position keeps what remains pinned bottom-left. */
+.s-agenda .illus-col {
+  max-width: 300px;
+  margin-top: auto;
+  padding-top: 40px;
+  flex: 0 1 auto;
+  min-height: 0;
+  object-fit: contain;
+  object-position: left bottom;
+}
+/* Timeline quarters are narrow and already carry a dot + rail. */
+.s-timeline .ic-item { width: 72px; height: 72px; margin-bottom: 14px; }
+
+/* =========================================================================
+   THEME-VIBRANT — GROUND FAMILIES
+   Grounds are built from Bot Teal and Trigger Amber, with Ops Indigo used
+   sparingly. Light and pale stops never carry a slide — they supply type and
+   small fills. Alert Coral is never a ground (see the note at the end).
+
+   Each family keeps the --t-bg-deep / --t-headline inversion described at the
+   top of the file, so the base rules paint nested panels correctly with no
+   per-archetype patching. Two directions, four families:
+
+     BRIGHT ground, dark type
+       teal        #00BBB4  ->  #082C2C
+       amber       #F9A100  ->  #3F2900
+     DARK ground, light type
+       amber-dark  #7D5100  ->  #FDD999 / white
+       indigo      #504384  ->  #BAB3CF / white
+       (plus the #005655 working surface, same direction)
+
+   Ops Indigo can only run light-on-dark: the styleguide gives it no dark stop,
+   so its primary is very dark and nothing in-family clears AA against it
+   (indigo-deep manages 1.77:1). Don't try dark type on indigo.
+
+   Assignment is per archetype so it's deterministic, and no two families land
+   on adjacent slides in the template's running order. To override on a single
+   slide, add class="inset-teal | inset-amber | inset-amber-dark | inset-indigo".
+   ========================================================================= */
+
+/* Bot Teal — primary ground */
+.theme-vibrant .s-bullets,
+.theme-vibrant .s-timeline,
+.theme-vibrant .s-pricing,
+.theme-vibrant .inset-teal {
+  --t-bg-deep:       var(--brand-teal);
+  --t-headline:      var(--c-teal-deep);
+  --t-headline-soft: var(--c-teal-deep);
+  --t-body-on-dark:  var(--c-teal-deep);
+  --t-divider:       rgba(8,44,44,0.28);
+  --logo:            var(--logo-dark);   /* bright ground */
+  /* --t-mark exists to hold primary Bot Teal when the surrounding family darkens.
+     On a ground that IS primary Bot Teal that intent is self-defeating: the
+     completed timeline dot was #00BBB4 on #00BBB4 and disappeared. Step one rung
+     down to teal-deep (6.23:1), which is what every other mark on this ground
+     already uses. Set on the ground, not on s-timeline, because any inset-teal
+     slide has the identical problem. */
+  --t-mark:          var(--c-teal-deep);
+  /* Same defect as --t-on-panel had, in the other half of the pair: --t-on-accent
+     defaults to var(--t-bg-deep), which is only correct when the ground is dark.
+     On this bright teal ground the pricing slide's "MOST POPULAR" ribbon was
+     painting #00BBB4 type on its own #F9A100 fill — 1.15:1, effectively blank,
+     on the one badge whose whole job is to mark the featured tier. Type on an
+     amber fill is amber-deep regardless of what the slide sits on: 6.62:1. */
+  --t-on-accent:     var(--c-amber-deep);
+}
+
+/* PRICING — the featured tier's fill and type are set EXPLICITLY here rather than
+   inherited through the :root chain. Left to the defaults, --t-panel resolves as
+   var(--t-headline) and --t-on-panel as var(--t-bg-deep); on this slide that
+   second one is the #00BBB4 ground itself, so the featured tier's type was being
+   painted in the same colour as the background behind it. Two indirections deep
+   through tokens the slide also remaps for other purposes is too fragile for the
+   one box on the slide that has to stand out. Name the values. */
+.theme-vibrant .s-pricing {
+  --t-panel:    var(--c-teal-deep);   /* #082C2C — 6.2:1 against the ground */
+  --t-on-panel: var(--c-teal-pale);   /* #A5DFDF — light type on that dark fill */
+  /* Both tiers on this slide are dark fills, so the in-card divider has to be a
+     light hairline rather than the theme-wide dark one meant for white cards. */
+  --t-on-card-divider: rgba(165,223,223,0.22);
+}
+
+/* The non-featured tiers darken to Bot Teal Dark so they sit ONE rung from the
+   featured tier instead of five (they were inheriting the theme-wide white).
+   Scoped :not(.feature) so these can't reach the featured tier, which paints
+   from the --t-panel / --t-on-panel pair above instead.
+
+   These now set the CARD type set rather than the ground type tokens. Same
+   values, but they no longer reach past the card into anything else on the
+   slide, and --t-on-card-mark is what paints the ✓ glyphs — primary Bot Teal
+   reads at 3.56:1 on this #005655 fill, clearing the 3:1 for a glyph. */
+.theme-vibrant .s-pricing .tier:not(.feature) {
+  --t-bg-card:         var(--c-teal-dark);
+  --t-on-card-label:   var(--brand-teal);
+  --t-on-card-strong:  var(--c-teal-pale);
+  --t-on-card-body:    #D8EDED;
+  --t-on-card-mark:    var(--brand-teal);
+}
+
+/* BULLETS — the three points become inset boxes: a pale-teal tint of the
+   primary-teal ground, holding the illustration and the copy together. Replaces
+   the amber top rule, which competed with the illustrations for attention. The
+   fill is a soft step off the ground (~1.6:1) on purpose — it groups the column
+   without carving the slide into three hard cards. Type is already teal-deep
+   here, so it reads at full strength on the tint. Dark-deck only sets these
+   tokens' defaults, so it keeps its bare column and amber rule untouched. */
+.theme-vibrant .s-bullets {
+  --t-item-fill:   var(--c-teal-pale);
+  --t-item-radius: 40px;
+  --t-item-pad:    44px;
+  --t-item-rule:   none;
+}
+
+/* COMPARE — names its panel pair outright, for the reason spelled out in the
+   "custom properties don't re-resolve" note at the top of this file. Left to the
+   :root default, --t-panel resolved to :root's --t-headline — primary Bot Teal —
+   so the "after" column rendered as a teal box on the amber ground while the
+   "before" column was amber-dark. Not one rung apart; not even the same family.
+   Amber-deep beside amber-dark is the pairing references/slides.md documents. */
+.theme-vibrant .s-compare {
+  --t-panel:    var(--c-amber-deep);   /* #3F2900 — one rung from the before column */
+  --t-on-panel: var(--c-amber-light);  /* #FDD999 — 10.18:1 on that fill */
+}
+
+/* Trigger Amber — primary ground */
+.theme-vibrant .s-compare,
+.theme-vibrant .inset-amber {
+  --t-bg-deep:       var(--c-amber);
+  --t-headline:      var(--c-amber-deep);
+  --t-headline-soft: var(--c-amber-deep);
+  --t-body-on-dark:  var(--c-amber-deep);
+  --t-accent:        var(--c-amber-deep);   /* amber cannot accent its own ground */
+  --t-divider:       rgba(63,41,0,0.28);
+  --logo:            var(--logo-dark);   /* bright ground */
+}
+
+/* COMPARE — the "before" column darkens to Trigger Amber Dark so the two panels
+   sit ONE rung apart instead of five. Previously this column inherited the
+   theme-wide white --t-bg-card and sat beside an amber-deep "after" panel, the
+   widest possible split. Both columns now run light-on-dark and the bright amber
+   ground does the separating, not the boxes.
+
+   Scoped to .col.before because the "after" column paints from the panel pair
+   instead. These used to remap --t-headline-soft / --t-body-on-dark, which also
+   paint the slide's own headline and eyebrow on the amber ground — so the scope
+   was load-bearing and easy to break. On the card token set it no longer is:
+   --t-on-card-* cannot reach slide type at all. The values are the ones the
+   amber-dark ground already uses on s-agenda / s-table, so the pairing is proven. */
+.theme-vibrant .s-compare .col.before {
+  --t-bg-card:        var(--c-amber-dark);
+  --t-on-card-strong: var(--c-white);
+  --t-on-card-body:   var(--c-amber-light);
+  /* The ✕ glyphs step up one stop, to Coral Light. Canonical coral on this
+     #7D5100 fill is 2.10:1 — below the 3:1 a glyph needs. This is pre-existing:
+     the glyph was a hardcoded off-palette #FF4C54 and scored the same 2.10:1,
+     it just wasn't reachable to fix until the colour became a token.
+     Coral Light lands at 3.37:1 and keeps the mark in the coral family. */
+  --t-coral:          var(--c-coral-light);
+}
+
+/* Trigger Amber Dark — the second amber ground, running light-on-dark. This is
+   what carries the slides that used to sit on a coral field; it keeps the deck's
+   warm register without spending primary amber (the CTA colour) on a third and
+   fourth full slide. */
+/* TABLE — names its panel pair for the same reason s-compare does. The "good"
+   pill was rendering Bot Teal purely because that's what :root's --t-panel
+   resolves to, not because anything chose it. Teal IS the right colour for a
+   positive pill — it's the brand anchor — so this makes the accident a decision
+   and stops the lint flagging it. #082C2C on #00BBB4 is 6.23:1. */
+.theme-vibrant .s-table {
+  --t-panel:    var(--brand-teal);
+  --t-on-panel: var(--c-teal-deep);
+}
+
+.theme-vibrant .s-agenda,
+.theme-vibrant .s-table,
+.theme-vibrant .inset-amber-dark {
+  --t-bg-deep:       var(--c-amber-dark);
+  --t-headline:      var(--c-amber-light);
+  --t-headline-soft: var(--c-white);
+  --t-body-on-dark:  var(--c-amber-light);
+  --t-accent:        var(--c-amber-light);
+  --t-divider:       rgba(253,217,153,0.28);
+  /* --logo stays var(--logo-light): darker than a primary. */
+}
+
+/* Ops Indigo — primary ground, used sparingly: the testimonial band plus one
+   content slide. Runs light-on-dark, like Amber Dark and the working surface. */
+.theme-vibrant .s-process,
+.theme-vibrant .inset-indigo {
+  --t-bg-deep:       var(--c-indigo);
+  --t-headline:      var(--c-indigo-light);
+  --t-headline-soft: var(--c-white);
+  --t-body-on-dark:  var(--c-indigo-light);
+  --t-divider:       rgba(186,179,207,0.28);
+  /* --logo stays var(--logo-light): Ops Indigo is darker than a primary. */
+  /* Cards on this slide keep the indigo family rather than taking the theme-wide
+     teal card type, so the slide reads all-indigo from ground to card. Indigo DOES
+     have usable dark stops — the "no dark stop" note elsewhere is about type on the
+     #504384 ground, not on a white card. 8.48:1 and 15.02:1 on white. */
+  --t-on-card-label:  var(--c-indigo);
+  --t-on-card-strong: var(--c-indigo-deep);
+  --t-on-card-body:   var(--c-indigo-deep);
+}
+
+/* ALERT CORAL IS NOT A GROUND — in either theme.
+   Coral stays what brand.md says it is: a small accent — the process step badge,
+   the third team avatar, `.tag-coral`, `.accent-coral`, the "before" glyphs.
+   There is deliberately no `inset-coral`; for a fourth ground use
+   `inset-amber-dark`. The badge fill is --t-coral and its type --t-on-coral,
+   both set above, so no rule is needed here. */
