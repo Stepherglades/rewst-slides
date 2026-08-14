@@ -62,6 +62,10 @@
         <p class="eyebrow">Today</p>
         <h2 class="h-2">Here's what we'll cover over the next [N] minutes.</h2>
         <p class="body">[One-sentence framing of the conversation — what the audience should expect to walk away with.]</p>
+        <!-- Fills the bottom of the lead column, which the list spread doesn't
+             reach. Indigo-dominant, so it clears both this slide's grounds
+             (teal-deep in the dark deck, #7D5100 in vibrant). -->
+        <img class="illus-col" src="illustrations/Object-time.svg" alt=""/>
       </div>
       <ol class="list">
         <li>
@@ -116,10 +120,16 @@
     <div class="content-area">
       <div class="left">
         <p class="eyebrow">[Metric label]</p>
-        <div class="stat-num"></div>
-        <h3 class="h-3" style="font-size: 64px"></h3>
+        <div class="stat-num">[XX%]</div>
+        <h3 class="h-3" style="font-size: 64px">[One line naming what the number measures.]</h3>
       </div>
       <div class="card">
+        <!-- Panel-corner art: straddles the card's top-right corner, so it must
+             clear BOTH grounds it crosses — the slide ground and the card fill.
+             This piece is indigo-dominant, which clears the teal-deep ground and
+             the card in either theme (primary teal when dark, white when
+             vibrant). Swapping it for a teal piece would flatten it here. -->
+        <img class="illus-panel-corner" src="illustrations/Education-information.svg" alt=""/>
         <p class="eyebrow">What that means</p>
         <h3 class="h-3">[Translate the number into a tangible business outcome.]</h3>
         <p class="body">[Two sentences of context. Where the number comes from, why it matters now, and what changes because of it.]</p>
@@ -142,14 +152,17 @@
       </div>
       <ul class="bullets">
         <li>
+          <img class="ic-item" src="illustrations/Education-thinking.svg" alt=""/>
           <h4 class="h-4">[Point one headline]</h4>
           <p class="body-sm">[Two-sentence supporting body. Keep it short — the audience reads the headline, you say the rest aloud.]</p>
         </li>
         <li>
+          <img class="ic-item" src="illustrations/Community-target.svg" alt=""/>
           <h4 class="h-4">[Point two headline]</h4>
           <p class="body-sm">[Two-sentence supporting body. Parallel structure to point one — same verb form, similar length.]</p>
         </li>
         <li>
+          <img class="ic-item" src="illustrations/Object-gear-cloud.svg" alt=""/>
           <h4 class="h-4">[Point three headline]</h4>
           <p class="body-sm">[Two-sentence supporting body. End with the strongest claim of the three — it's what they'll remember.]</p>
         </li>
@@ -171,7 +184,8 @@
         <h2 class="h-2" style="margin-top:18px">[The shift we're making — one sentence that frames both columns.]</h2>
       </div>
       <div class="cols">
-        <div class="col before" style="background-color: rgb(14, 61, 61)">
+        <div class="col before">
+          <img class="ic-item" src="illustrations/Chart-circle-broken.svg" alt=""/>
           <p class="lbl">[Today / the status quo]</p>
           <h3 class="h-3">[Short label for the painful state]</h3>
           <ul>
@@ -182,6 +196,7 @@
           </ul>
         </div>
         <div class="col after">
+          <img class="ic-item" src="illustrations/Chart-going-up.svg" alt=""/>
           <p class="lbl">[After / the new approach]</p>
           <h3 class="h-3">[Short label for the better state]</h3>
           <ul>
@@ -202,15 +217,18 @@
   <!-- ════════════════════════════════════════════════════════════════════
        07 — IMAGE-LED FULL BLEED
        ════════════════════════════════════════════════════════════════════ -->
-  <section data-screen-label="07 Image-led" class="s-image" style="background-color: #00BBB4">
+  <section data-screen-label="07 Image-led" class="s-image">
     <div class="content-area">
       <div class="text">
         <p class="eyebrow">[Eyebrow / proof point]</p>
         <h1 class="h-title">[Big visual statement — one strong sentence that the illustration reinforces.]</h1>
         <p class="body">[One or two supporting sentences. Keep the slide visual-first; let the speaker do the heavy lifting.]</p>
       </div>
-      <div class="frame" style="padding: 0px; background-color: #00BBB4">
-        <img src="illustrations/Workflow-playbook.svg" alt="[Replace with relevant illustration]" style="object-fit: contain; width: 600px; height: 600px"/>
+      <!-- Bare feature art: no frame, so the piece must clear the slide GROUND.
+           s-image sits on a teal-family ground in both themes — pick from the
+           indigo or amber rows of the pairing table, never the teal row. -->
+      <div class="art">
+        <img src="illustrations/Education-thinking.svg" alt="[Replace with relevant illustration]"/>
       </div>
     </div>
     <div class="brand-mark">
@@ -291,6 +309,7 @@
         <div class="qtr done">
           <div class="dot"></div>
           <div class="label">Q1 · Shipped</div>
+          <img class="ic-item" src="illustrations/Workflow-progress.svg" alt=""/>
           <div class="heading">[Phase one name]</div>
           <ul>
             <li>[Milestone delivered]</li>
@@ -301,6 +320,7 @@
         <div class="qtr">
           <div class="dot"></div>
           <div class="label">Q2 · In flight</div>
+          <img class="ic-item" src="illustrations/Community-handshake.svg" alt=""/>
           <div class="heading">[Phase two name]</div>
           <ul>
             <li>[Milestone in progress]</li>
@@ -311,6 +331,7 @@
         <div class="qtr">
           <div class="dot"></div>
           <div class="label">Q3 · Planned</div>
+          <img class="ic-item" src="illustrations/Education-information.svg" alt=""/>
           <div class="heading">[Phase three name]</div>
           <ul>
             <li>[Milestone planned]</li>
@@ -321,6 +342,7 @@
         <div class="qtr">
           <div class="dot"></div>
           <div class="label">Q4 · Planned</div>
+          <img class="ic-item" src="illustrations/Object-gear-cloud.svg" alt=""/>
           <div class="heading">[Phase four name]</div>
           <ul>
             <li>[Milestone planned]</li>
@@ -340,6 +362,7 @@
        11 — TABLE / DATA GRID
        ════════════════════════════════════════════════════════════════════ -->
   <section data-screen-label="11 Table" class="s-table">
+    <img class="illus-topright" src="illustrations/Object-gear-cloud.svg" alt=""/>
     <div class="content-area">
       <div>
         <p class="eyebrow">At a glance</p>
@@ -539,9 +562,10 @@
   <section data-screen-label="16 Q&amp;A + Close" class="s-close">
     <div class="content-area">
       <div>
-        <p class="eyebrow" style="color:var(--t-accent-soft)">Open the floor</p>
+        <p class="eyebrow">Open the floor</p>
         <h1 class="h-title">Questions?</h1>
         <p class="body">[Reframe the one question you most want the room to ask — it primes them to engage.]</p>
+        <img class="illus-col" src="illustrations/Community-handshake.svg" alt=""/>
       </div>
       <div>
         <div class="cta-card">
@@ -563,131 +587,11 @@
   </section>
 
   <!-- ════════════════════════════════════════════════════════════════════
-       LIGHT VARIANTS — cream-background alternates of common layouts.
-       Add class="theme-light" to flip any slide; drag/duplicate these into
-       your flow as needed.
+       THEMES — this template is the dark deck, and it is fully dark: no
+       archetype uses a light ground. For the vibrant deck, put
+       class="theme-vibrant" on <deck-stage> and every slide re-bands
+       automatically. Don't mix the two by hand on individual slides.
        ════════════════════════════════════════════════════════════════════ -->
-
-  <!-- L1 — AGENDA (light) -->
-  <section data-screen-label="L1 Agenda · Light" class="s-agenda theme-light">
-    <div class="content-area">
-      <div class="lead">
-        <p class="eyebrow">Today</p>
-        <h2 class="h-2">Here's what we'll cover over the next [N] minutes.</h2>
-        <p class="body">[One-sentence framing of the conversation — what the audience should expect to walk away with.]</p>
-      </div>
-      <ol class="list">
-        <li>
-          <span class="num"></span>
-          <span class="label">[Section one — the problem space]</span>
-          <span class="dur">[5 min]</span>
-        </li>
-        <li>
-          <span class="num"></span>
-          <span class="label">[Section two — what's changing]</span>
-          <span class="dur">[10 min]</span>
-        </li>
-        <li>
-          <span class="num"></span>
-          <span class="label">[Section three — what it means for you]</span>
-          <span class="dur">[8 min]</span>
-        </li>
-        <li>
-          <span class="num"></span>
-          <span class="label">[Q &amp; A and next steps]</span>
-          <span class="dur">[7 min]</span>
-        </li>
-      </ol>
-    </div>
-    <div class="brand-mark">
-      <img src="logo/rewst-logo.png" alt="Rewst"/>
-    </div>
-    <div class="pageno on-light">LIGHT · 01</div>
-  </section>
-
-  <!-- L2 — BIG STAT (light) -->
-  <section data-screen-label="L2 Big Stat · Light" class="s-stat theme-light">
-    <div class="content-area">
-      <div class="left">
-        <p class="eyebrow">[Metric label]</p>
-        <div class="stat-num"></div>
-        <h3 class="h-3" style="font-size: 64px"></h3>
-      </div>
-      <div class="card">
-        <p class="eyebrow">What that means</p>
-        <h3 class="h-3">[Translate the number into a tangible business outcome.]</h3>
-        <p class="body">[Two sentences of context. Where the number comes from, why it matters now, and what changes because of it.]</p>
-      </div>
-    </div>
-    <div class="brand-mark">
-      <img src="logo/rewst-logo.png" alt="Rewst"/>
-    </div>
-    <div class="pageno on-light">LIGHT · 02</div>
-  </section>
-
-  <!-- L3 — TEXT + BULLETS (light) -->
-  <section data-screen-label="L3 Bullets · Light" class="s-bullets theme-light">
-    <div class="content-area">
-      <div>
-        <p class="eyebrow">[Topic eyebrow]</p>
-        <h2 class="h-2" style="margin-top:18px">[Three reasons this matters — written as one complete sentence.]</h2>
-      </div>
-      <ul class="bullets">
-        <li>
-          <h4 class="h-4">[Point one headline]</h4>
-          <p class="body-sm">[Two-sentence supporting body. Keep it short — the audience reads the headline, you say the rest aloud.]</p>
-        </li>
-        <li>
-          <h4 class="h-4">[Point two headline]</h4>
-          <p class="body-sm">[Two-sentence supporting body. Parallel structure to point one — same verb form, similar length.]</p>
-        </li>
-        <li>
-          <h4 class="h-4">[Point three headline]</h4>
-          <p class="body-sm">[Two-sentence supporting body. End with the strongest claim of the three — it's what they'll remember.]</p>
-        </li>
-      </ul>
-    </div>
-    <div class="brand-mark">
-      <img src="logo/rewst-logo.png" alt="Rewst"/>
-    </div>
-    <div class="pageno on-light">LIGHT · 03</div>
-  </section>
-
-  <!-- L4 — TEAM GRID (light) -->
-  <section data-screen-label="L4 Team · Light" class="s-team theme-light">
-    <div class="content-area">
-      <div>
-        <p class="eyebrow">Who's behind this</p>
-        <h2 class="h-2" style="margin-top:18px">Meet the team driving [project / initiative] forward.</h2>
-      </div>
-      <div class="grid">
-        <div class="card">
-          <div class="avatar">[AB]</div>
-          <p class="name">[Person one name]</p>
-          <p class="role">[Role, team] · [Hook — one line about what they're known for]</p>
-        </div>
-        <div class="card">
-          <div class="avatar">[CD]</div>
-          <p class="name">[Person two name]</p>
-          <p class="role">[Role, team] · [Hook]</p>
-        </div>
-        <div class="card">
-          <div class="avatar">[EF]</div>
-          <p class="name">[Person three name]</p>
-          <p class="role">[Role, team] · [Hook]</p>
-        </div>
-        <div class="card">
-          <div class="avatar">[GH]</div>
-          <p class="name">[Person four name]</p>
-          <p class="role">[Role, team] · [Hook]</p>
-        </div>
-      </div>
-    </div>
-    <div class="brand-mark">
-      <img src="logo/rewst-logo.png" alt="Rewst"/>
-    </div>
-    <div class="pageno on-light">LIGHT · 04</div>
-  </section>
 
 </deck-stage>
 

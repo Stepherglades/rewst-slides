@@ -9,8 +9,8 @@ description: >-
   redone in Rewst branding. Triggers even when they don't say the word "deck" —
   e.g. "make slides for the QBR," "I need something for the customer webinar,"
   "put together a roadmap presentation." Owns brand fidelity: the Rewst palette
-  (Bot Teal #00BBB4 as the anchor), Poppins/Montserrat type, logo usage, voice,
-  and the rule that primary Bot Teal appears on every slide.
+  (Bot Teal #00BBB4 as the anchor), Poppins/Montserrat type, logo usage, and
+  voice.
 ---
 
 # Rewst Deck
@@ -22,24 +22,47 @@ from it.
 
 ## How the pieces fit
 
-- `assets/deck-template.html` — the starting deck: 16 archetypes + light
-  variants, brand CSS wired in, placeholder copy in `[brackets]`.
+- `assets/deck-template.html` — the starting deck: 16 archetypes, brand CSS
+  wired in, placeholder copy in `[brackets]`. Ships dark; add
+  `class="theme-vibrant"` to `<deck-stage>` for the vibrant theme.
 - `assets/deck.css`, `assets/deck-stage.js`, `assets/design-system/`,
   `assets/logo/`, `assets/illustrations/` — the brand kit the HTML depends on.
-- `references/brand.md` — palette, type, logo, voice, the Bot Teal rule.
+- `references/brand.md` — palette, type, logo, voice.
 - `references/slides.md` — what each archetype is for and where teal lives.
-- `scripts/deck.py` — `check` (verify Bot Teal, right margin, box padding, and
-  footers per slide) and `export` (writes `.pdf`, `-editable.pptx`, and/or
-  `-html.zip`; `--formats` selects which — ask the user, see step 6).
+- `scripts/deck.py` — `check` (verify right margin, box padding, and footers per
+  slide, plus no retired teal in the source) and `export` (writes `.pdf`,
+  `-editable.pptx`, and/or
+  `-html.zip`; `--formats` selects which — ask the user, see step 7).
 
 ## Workflow
 
 ### 1. Read the two references first
 Open `references/brand.md` and `references/slides.md` before writing anything.
-They define the palette, voice, archetypes, and the one hard rule. Don't author
-from memory of "teal-ish corporate decks" — the specifics matter.
+They define the palette, voice, and archetypes. Don't author from memory of
+"teal-ish corporate decks" — the specifics matter.
 
-### 2. Set up a working copy
+### 2. Ask which theme — dark or vibrant
+
+**Ask before authoring, unless the user already said** (in this conversation, in
+their original prompt, or as a standing preference). Ask once, up front, in the
+same round as any other clarifying questions — don't build a deck and then ask.
+
+- **Dark** — the deck's default. Bot Teal Deep grounds throughout, light type on
+  dark, teal accents. One consistent convention; the safe choice for a formal or
+  data-heavy deck.
+- **Vibrant** — saturated brand primaries per slide (teal, amber, indigo) over a
+  Bot Teal Dark surface. Higher energy; better for keynotes, launches, and
+  customer-facing storytelling.
+
+Signals that answer it without asking: "keep it understated / formal / like our
+usual deck" is dark; "make it pop / colorful / high energy / for the keynote
+stage" is vibrant. If they give no signal at all and decline to choose, default
+to dark.
+
+Apply the answer at the deck level in step 4 — `class="theme-vibrant"` on
+`<deck-stage>` for vibrant, nothing for dark. Never mix the two in one deck.
+
+### 3. Set up a working copy
 Create a deck folder in the output area and copy the kit so the deck's relative
 asset paths resolve:
 
@@ -55,8 +78,12 @@ cp <skill>/assets/deck-template.html ./<deckname>.html
 Everything (`deck.css`, `design-system/`, `logo/`, `illustrations/`) sits beside
 the HTML — keep it that way so the deck stays portable.
 
-### 3. Author the deck
+### 4. Author the deck
 Work inside `<deckname>.html`:
+- **Set the theme first** (step 2). Vibrant means `class="theme-vibrant"` on
+  `<deck-stage>`; dark means leaving it off. Do this before filling content —
+  the theme drives ground colors, and `references/slides.md` documents the
+  per-archetype grounds and the pairing rules that go with them.
 - **Choose archetypes** from `references/slides.md` that fit the content. Fill
   the `[bracketed]` placeholders. Delete sections you don't need; this is a kit,
   not a fixed 16-slide deck. **Always open with the `s-title` slide** and keep
@@ -67,50 +94,47 @@ Work inside `<deckname>.html`:
   jargon. Sentence-case titles as full sentences. Three points beat four.
 - **Stay in palette, solid fills, no gradients.** Anchor each layout in Bot
   Teal. Use Trigger Amber only for genuine CTAs and the section dividers.
-- **Respect the right margin.** Keep content within the ~110px right gutter; the
-  only thing allowed to bleed past it is the single-color Stewart on title and
-  section/header slides. Don't move the footers.
+- **Respect the right margin.** Keep content within the ~110px right gutter. Only
+  two things may bleed past it, both art: the single-color Stewart on title and
+  section/header slides, and a `.illus-panel-corner` illustration hung off an
+  inset panel's top-right corner. Don't move the footers.
 - **Logo per background:** `rewst-logo-ondark.png` on dark, `rewst-logo.png` on
   light. Never alter it.
 - **Keep the chrome honest:** update each `.pageno` (e.g. `04 / 16` → `04 / 08`)
   and keep the `#speaker-notes` JSON array the same length and order as the
   slides you keep — the exporter maps note `N` to slide `N`.
-- Leave `deck-stage.js` wired up and leave the footer Bot Teal dot rule in
-  `deck.css` in place.
+- Leave `deck-stage.js` wired up.
 
-### 4. The Bot Teal rule — primary `#00BBB4` on every slide
-This is the brand rule the team added and the thing this skill exists to
-guarantee. It holds automatically: most archetypes carry teal in their accents,
-and a small Bot Teal indicator dot is baked into the footer of every slide
-(including any you add). So in normal authoring you don't have to do anything
-special — just don't strip the dot, and don't recolor accents off-teal.
+### 5. Anchor the deck in Bot Teal
+`#00BBB4` is the brand's anchor color and most archetypes carry it in their
+accents — eyebrows, indicators, the title and image grounds, the featured
+pricing tier. Anchor the deck as a whole there.
 
-If you build a genuinely custom slide, give it a real `#00BBB4` element (an
-eyebrow, indicator, or teal surface) so the color anchors the layout rather than
-relying on the dot alone.
+There is no per-slide teal requirement. A section divider that reads entirely in
+amber, or a stat slide with an amber hero number, is correct as designed — don't
+add a token teal element just to tick a box.
 
-### 5. Check before exporting
+### 6. Check before exporting
 ```bash
 python <skill>/scripts/deck.py check /mnt/user-data/outputs/<deckname>/<deckname>.html
 ```
 This renders every slide in a real browser and verifies these rules:
-1. **Bot Teal** — at least one element in exact `#00BBB4` is present.
-2. **Right margin** — no content paints past the 110px right gutter (the bleed
-   Stewart and the footers are exempt). This catches cards, tables, or columns
-   that creep to the edge before they ship.
-3. **Box padding** — every content box/card keeps at least `--box-pad-min`
+1. **Right margin** — no content paints past the 110px right gutter (the bleed
+   Stewart, `.illus-panel-corner` art, and the footers are exempt). This catches
+   cards, tables, or columns that creep to the edge before they ship.
+2. **Box padding** — every content box/card keeps at least `--box-pad-min`
    (32px) of internal padding, so text never touches a card edge (small chips,
    badges, avatars, and table cells are exempt).
-4. **Footers** — every slide shows the Rewst logo bottom-left and the slide
+3. **Footers** — every slide shows the Rewst logo bottom-left and the slide
    number bottom-right (never swapped, moved, or hidden).
-5. **Retired teal** — the deck's own source (its HTML and `deck.css`) must not
+4. **Retired teal** — the deck's own source (its HTML and `deck.css`) must not
    contain the retired `#1EAFAF` / `#1CAFAF`. (Illustration SVGs are external and
    aren't scanned — their internal legacy teal is left as-is by design.)
 
 A `FAIL` is a real defect — fix it and re-run until everything passes. Don't
 export a deck that fails.
 
-### 6. Export — ask which formats, then run one command
+### 7. Export — ask which formats, then run one command
 
 **Before exporting, ask the user which deliverables they want** (unless they've
 already said — in this conversation or as a standing preference). Offer the
@@ -119,11 +143,12 @@ into `--formats`:
 
 1. `<deckname>.pdf` — one page per slide, full fidelity. The share/print format.
 2. `<deckname>-editable.pptx` — **editable** PowerPoint: the design (teal fields,
-   Stewart bleed, illustrations, cards, dividers, generated marks) is a
-   full-bleed background image, and **every piece of copy is a native, editable
-   text box** in the correct Rewst font, size, color, and position. The footer
-   Bot Teal dot and the timeline column dots are native, editable ovals too (not
-   baked), so they can be recolored or nudged in PowerPoint.
+   Stewart bleed, cards, dividers, generated marks) is a full-bleed background
+   image, and **every piece of copy is a native, editable text box** in the
+   correct Rewst font, size, color, and position. **Illustrations are native
+   pictures** — select, move, resize, or right-click → Change Picture to swap
+   one out. The timeline column dots are native, editable ovals too (not baked),
+   so they can be recolored or nudged in PowerPoint.
 3. `<deckname>-html.zip` — the **editable source**: the HTML plus its asset kit,
    zipped. Unzip and open the HTML in a browser to view/edit/re-render.
 
@@ -141,11 +166,44 @@ just removes `pptx` from the set.)
 
 The editable PPTX is built on the Rewst PowerPoint template
 (`assets/template/rewst-slides.potx`), so the delivered file carries the branded
-slide master, six branded layouts (title, content_dark, section divider, big
-statement, quote, content_light), and the #00BBB4 theme palette. Generated
-slides look exactly as before; the layouts exist so anyone adding a **new**
-slide by hand in PowerPoint gets on-brand color, type, and placement instead of
-Office defaults.
+slide master, the branded layouts (title, content_dark, section divider, big
+statement, quote, content_light and variants), and the #00BBB4 theme palette.
+Generated slides look exactly as before; the layouts exist so anyone adding a
+**new** slide by hand in PowerPoint gets on-brand color, type, and placement
+instead of Office defaults.
+
+### The Supporting graphics slide ships at the end — both themes
+
+The template carries one real slide of its own, **"Supporting graphics"**: a
+library of the brand's SVG spot art, sized and ready to copy onto a slide. It is
+part of the deliverable, not scaffolding. Two rules, and they hold for the dark
+deck and the vibrant theme alike, because both go through the same exporter:
+
+- **Never strip it.** A 16-slide deck exports as 17 slides. The extra one is
+  expected — don't "fix" it, and don't renumber anything to account for it. The
+  deck's own `.pageno` values are baked into the slide backgrounds and are
+  unaffected.
+- **It goes last.** `export_editable` relocates it behind the generated slides
+  (`_move_template_slides_to_end`). Left alone it would open the presentation,
+  because python-pptx appends new slides after whatever the template already
+  holds. If you ever see it as slide 1, that relocation didn't run.
+
+This is **PPTX only.** The PDF is rendered from the HTML deck and knows nothing
+about the `.potx`, so a 16-slide deck stays a 16-page PDF. That's correct — the
+PDF is the present/print artifact and a sheet of loose spot art doesn't belong
+in it. Don't add it there.
+
+Two things about the template that will bite if you edit it in PowerPoint:
+
+- **The notes master must keep its body placeholder.** python-pptx builds each
+  slide's notes by cloning the notes master. A master with an empty shape tree
+  yields notes slides with nowhere to put text, and speaker notes silently stop
+  working. `_set_speaker_notes` now rebuilds the placeholder when it's missing,
+  so the export survives either way — but the template is the right place to fix
+  it (View → Notes Master, re-enable Body).
+- **Adding more slides to the `.potx` adds them all to every export.** The
+  relocation moves whatever it finds, so the count stays honest, but the
+  template is not a scratchpad.
 
 Tradeoffs to mention when handing over the **editable** PPTX:
 - The editor needs **Poppins and Montserrat installed** locally, or PowerPoint
@@ -159,13 +217,21 @@ Tradeoffs to mention when handing over the **editable** PPTX:
 - List bullets, numbers, and ✓/✕ markers are **native, editable PPTX markers**
   (drawn by PowerPoint), so they reflow and stay aligned when the list text is
   edited; the hanging indent is preserved and re-typing an item keeps its marker.
-- The only decorative mark that stays baked into the background — and so isn't
-  editable — is the Stewart art. The footer indicator dot and the s-timeline
-  column dots are native, editable ovals (recolor or move them freely). **All
-  actual text is editable**, including the list markers above and the agenda's
-  auto-numbers (their CSS counter is resolved into a real text box on export).
+- **Illustrations are native pictures**, one per placement, named for their
+  source file (`Illustration - Object-gear-cloud`) so they're findable in the
+  Selection pane. Each carries the original SVG, so PowerPoint 2016/365 draws
+  them as vector and they stay sharp at any size; older viewers fall back to an
+  embedded raster automatically. Swapping one is right-click → Change Picture.
+- Decorative marks that stay **baked** into the background, and so aren't
+  editable: the Stewart bleed, the cards and inset boxes themselves, dividers and
+  rules, pills, badges, and the masked ✓/✕ glyphs. To restyle those, either edit
+  the HTML and re-export, or build the slide fresh in PowerPoint on one of the
+  branded layouts. The s-timeline column dots are native, editable ovals
+  (recolor or move them freely). **All actual text is editable**, including the
+  list markers above and the agenda's auto-numbers (their CSS counter is
+  resolved into a real text box on export).
 
-### 7. Present the results
+### 8. Present the results
 Share the format(s) the user chose, briefly noting which is which — the PDF is
 pixel-perfect for presenting or printing as-is; the editable PPTX is for
 tweaking copy in PowerPoint; the HTML zip is the master you can re-render. If
@@ -187,6 +253,8 @@ re-render the deck, only re-export.
 ## Guardrails
 
 - Primary Bot Teal is `#00BBB4`. Never the retired `#1EAFAF`.
+- Confirm the theme (dark or vibrant) before authoring, and apply it at the deck
+  level. One theme per deck — never mixed slide by slide.
 - Every deck opens with the `s-title` bleed-Stewart slide (Bot Teal or Bot Teal
   Deep field). Don't substitute a plain title or drop the Stewart silhouette.
 - The off-the-edge Stewart is used ONLY on title and section-divider slides,
@@ -194,7 +262,7 @@ re-render the deck, only re-export.
   tone-on-tone (teal silhouette on a teal field, amber on an amber field). Never
   on other slides, never off the left, never teal-on-amber or amber-on-teal.
 - Keep content within the right-hand margin (~110px gutter). Only the bleed
-  Stewart may cross it; footers (brand mark, page number, teal dot) stay fixed.
+  Stewart may cross it; footers (brand mark, page number) stay fixed.
 - Every slide shows the Rewst logo bottom-left and the slide number bottom-right
   — including the title and dividers. Never swap, move, or hide them.
 - Every content box/card keeps at least `--box-pad-min` (32px) of inner padding
